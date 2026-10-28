@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e0a05">
+<title>NaraMotion</title>
+<meta name="description" content="NaraMotion — platform motion capture 9-DoF MARG berbasis AI untuk digitalisasi tari Nusantara dan pendidikan siswa.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Javanese:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Lewati ke konten</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#" aria-label="NaraMotion, beranda">
+      <svg class="brand-mark" viewBox="0 0 40 48" aria-hidden="true">
+        <path d="M20 2 C27 11 34 21 36 31 C37 38 36 42 34 46 L6 46 C4 42 3 38 4 31 C6 21 13 11 20 2 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M20 10 C25 17 29 24 30 31 C30.6 36 30 39 29 41 L11 41 C10 39 9.4 36 10 31 C11 24 15 17 20 10 Z" fill="currentColor" opacity=".18"/>
+        <circle cx="20" cy="27" r="4.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M20 31.5 V41 M14 36 H26" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+      <span class="brand-name">NaraMotion</span>
+    </a>
+    <nav class="nav" id="site-nav" aria-label="Navigasi utama">
+      <a href="#tentang">Tentang</a>
+      <a href="#cara-kerja">Cara Kerja</a>
+      <a href="#sensor">Sensor</a>
+      <a href="#komponen">Komponen</a>
+      <a href="#ruang">Fitur</a>
+      <a href="#arsip-tari">Arsip Tari</a>
+      <a href="#tim">Tim</a>
+      <a href="ekosistem.html">Ekosistem</a>
+      <a href="#studio" class="nav-cta">Buka Studio</a>
+    </nav>
+    <div class="top-actions">
+      <span id="user-chip" class="user-chip" hidden></span>
+      <button type="button" id="btn-logout" class="btn btn-line btn-sm" hidden>Keluar</button>
+      <a id="btn-login" class="btn btn-line btn-sm" href="#masuk">Masuk</a>
+      <a class="btn btn-gold btn-sm top-cta" href="#studio">Buka Studio</a>
+      <button type="button" class="menu-btn" id="menu-btn" aria-label="Buka menu" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ========================= LANDING ========================= -->
+<div id="landing">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="aksara" aria-hidden="true">꧁ ꦤꦫ ꧂</p>
+        <p class="eyebrow">Motion Capture · 9-DoF MARG · Kecerdasan Buatan</p>
+        <h1 class="hero-title">NaraMotion</h1>
+        <p class="hero-sub">An AI-Driven 9-DoF MARG Motion Capture Platform for Nusantara Cultural Dance Digitization and Student Education</p>
+        <p class="hero-lead">Merekam gerak tari Nusantara dalam tiga dimensi, menyimpannya sebagai arsip digital, dan mengajarkannya kembali kepada siswa dengan umpan balik per sendi.</p>
+        <div class="hero-cta">
+          <a class="btn btn-gold" href="#studio">Masuk Studio Rekam</a>
+          <a class="btn btn-line" href="#cara-kerja">Lihat cara kerjanya</a>
+        </div>
+        <dl class="stats">
+          <div><dt>Sumbu per node</dt><dd>9</dd></div>
+          <div><dt>Node tubuh</dt><dd>10</dd></div>
+          <div><dt>Laju sampel</dt><dd>100<small>Hz</small></dd></div>
+          <div><dt>Tari dalam arsip</dt><dd>6</dd></div>
+        </dl>
+      </div>
+
+      <figure class="hero-stage">
+        <svg class="gunungan" viewBox="0 0 400 520" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fbecc0"/>
+              <stop offset=".45" stop-color="#d4a94c"/>
+              <stop offset="1" stop-color="#8f6a2b"/>
+            </linearGradient>
+            <radialGradient id="gAura" cx=".5" cy=".55" r=".55">
+              <stop offset="0" stop-color="#d4a94c" stop-opacity=".34"/>
+              <stop offset=".6" stop-color="#d4a94c" stop-opacity=".08"/>
+              <stop offset="1" stop-color="#d4a94c" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="200" cy="290" rx="200" ry="240" fill="url(#gAura)"/>
+          <path class="g-line g1" d="M200 12 C262 92 330 190 352 300 C368 380 360 440 340 500 L60 500 C40 440 32 380 48 300 C70 190 138 92 200 12 Z"/>
+          <path class="g-line g2" d="M200 40 C252 110 310 200 328 300 C340 370 334 430 318 480 L82 480 C66 430 60 370 72 300 C90 200 148 110 200 40 Z"/>
+          <path class="g-line g3" d="M40 500 H360 M20 512 H380"/>
+        </svg>
+        <canvas id="hero-canvas" class="hero-canvas" aria-label="Animasi penari virtual yang digerakkan data sensor simulasi"></canvas>
+        <figcaption class="hero-cap"><span class="dot"></span>Pratinjau langsung: <strong id="hero-dance">Gambyong</strong> <span id="hero-region" class="muted">· Surakarta, Jawa Tengah</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="rule" aria-hidden="true"><span>꧅</span></div>
+
+  <section id="tentang" class="section">
+    <div class="wrap two-col">
+      <div>
+        <p class="eyebrow">Tentang</p>
+        <h2 class="h2">Tari diwariskan lewat tubuh. NaraMotion menyimpannya sebagai data.</h2>
+        <p>Selama ini tari tradisional diajarkan dari guru ke murid secara tatap muka. Rekaman video membantu, tetapi video hanya menangkap gambar dua dimensi: sudut siku, kedalaman mendhak, dan putaran ukel pergelangan tangan sering tidak terbaca.</p>
+        <p>NaraMotion memasang sepuluh node sensor kecil di tubuh penari. Setiap sensor membaca percepatan, kecepatan sudut, dan medan magnet bumi sehingga orientasi setiap segmen tubuh bisa dihitung dalam 3D. Hasilnya menjadi arsip gerak maestro yang presisi dan bahan belajar yang terukur bagi siswa.</p>
+      </div>
+      <div class="table-wrap frame">
+        <table class="compare">
+          <caption>Perbandingan media dokumentasi</caption>
+          <thead><tr><th scope="col">Aspek</th><th scope="col">Video 2D</th><th scope="col">NaraMotion</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Kedalaman gerak</th><td>Hilang</td><td>Terekam (3D)</td></tr>
+            <tr><th scope="row">Sudut sendi</th><td>Diperkirakan</td><td>Dihitung tiap 10 ms</td></tr>
+            <tr><th scope="row">Pengaruh cahaya &amp; kostum</th><td>Besar</td><td>Tidak berpengaruh</td></tr>
+            <tr><th scope="row">Perbandingan guru–siswa</th><td>Manual</td><td>Otomatis per sendi</td></tr>
+            <tr><th scope="row">Ukuran data per menit</th><td>±100 MB</td><td>±1 MB</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="cara-kerja" class="section section-band">
+    <div class="wrap">
+      <p class="eyebrow">Cara kerja</p>
+      <h2 class="h2">Dari gerak penari ke arsip digital dalam empat tahap</h2>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-no">I</span>
+          <h3>Pasang sensor</h3>
+          <p>Sepuluh node dipasang di kepala, badan, lengan atas dan lengan bawah kiri-kanan, serta paha dan betis kiri-kanan. Node tersembunyi di balik kostum.</p>
+        </li>
+        <li class="step">
+          <span class="step-no">II</span>
+          <h3>Fusi sensor</h3>
+          <p>Filter Madgwick menggabungkan sembilan sumbu data menjadi kuaternion orientasi setiap segmen tubuh, 100 kali per detik.</p>
+        </li>
+        <li class="step">
+          <span class="step-no">III</span>
+          <h3>Analisis AI</h3>
+          <p>Model sekuens mengenali ragam gerak seperti ukel, seblak sampur, atau gedrug, lalu membandingkan gerak siswa dengan gerak maestro.</p>
+        </li>
+        <li class="step">
+          <span class="step-no">IV</span>
+          <h3>Arsip &amp; kelas</h3>
+          <p>Gerak disimpan sebagai arsip tari Nusantara. Siswa berlatih di kelas digital dan menerima skor serta saran per sendi.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="sensor" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Sensor 9-DoF MARG</p>
+      <h2 class="h2">Tiga sensor, masing-masing tiga sumbu</h2>
+      <img class="node-hero" src="assets/3d/node.webp" alt="Ilustrasi 3D satu node sensor NaraMotion" width="384" height="384" loading="lazy">
+      <p class="lead">MARG adalah singkatan dari <em>Magnetic, Angular Rate, and Gravity</em>. Gabungan ketiganya memberi sembilan derajat kebebasan pengukuran pada setiap node.</p>
+      <div class="marg">
+        <article class="marg-card frame">
+          <p class="marg-sym"><img src="assets/3d/accel.webp" alt="" width="96" height="96" loading="lazy"></p>
+          <h3>Akselerometer</h3>
+          <p>Membaca gravitasi dan percepatan gerak. Menentukan kemiringan segmen dan mendeteksi hentakan kaki.</p>
+          <p class="spec"><span>Chip</span> ADXL345 · <span>Rentang</span> ±16 g</p>
+        </article>
+        <article class="marg-card frame">
+          <p class="marg-sym"><img src="assets/3d/gyro.webp" alt="" width="96" height="96" loading="lazy"></p>
+          <h3>Giroskop</h3>
+          <p>Membaca kecepatan putar. Menangkap gerak cepat dan halus seperti ukel pergelangan tangan.</p>
+          <p class="spec"><span>Chip</span> ITG-3205 · <span>Rentang</span> ±2000 °/s</p>
+        </article>
+        <article class="marg-card frame">
+          <p class="marg-sym"><img src="assets/3d/mag.webp" alt="" width="96" height="96" loading="lazy"></p>
+          <h3>Magnetometer</h3>
+          <p>Membaca medan magnet bumi sebagai kompas. Menjaga arah hadap penari agar tidak bergeser seiring waktu.</p>
+          <p class="spec"><span>Chip</span> HMC5883L · <span>Medan bumi di Jawa</span> ±44 µT</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="komponen" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Perangkat keras</p>
+      <h2 class="h2">Isi satu node sensor</h2>
+      <p class="lead">Setiap node berdiri sendiri: punya baterai, prosesor, layar status, dan sensor gerak. Sepuluh node identik dipasang di tubuh penari.</p>
+      <ol class="bom">
+        <li><b>Sensor 9-DoF GY-85</b><span>Akselerometer ADXL345, giroskop ITG-3205, dan magnetometer HMC5883L dalam satu modul I²C.</span></li>
+        <li><b>ESP32-C3 Super Mini</b><span>Membaca IMU, menghitung orientasi, dan mengirim data nirkabel.</span></li>
+        <li><b>Layar OLED</b><span>Menampilkan nomor node, status koneksi, dan sisa baterai.</span></li>
+        <li><b>Baterai Li-Po pipih 1000 mAh</b><span>Tipis agar muat di balik kostum.</span></li>
+        <li><b>Modul cas USB Type-C</b><span>Mengisi ulang baterai tanpa membongkar node.</span></li>
+      </ol>
+      <p class="fine">Penempatan: kepala, badan, lengan atas dan lengan bawah kiri-kanan, paha dan betis kiri-kanan.</p>
+    </div>
+  </section>
+
+  <section id="ruang" class="section section-band">
+    <div class="wrap">
+      <p class="eyebrow">Fitur aplikasi</p>
+      <h2 class="h2">Tiga ruang kerja</h2>
+      <div class="rooms">
+        <a class="room frame" href="#studio">
+          <img class="room-icon" src="assets/3d/dancer.webp" alt="" width="120" height="120" loading="lazy">
+          <h3>Studio Rekam</h3>
+          <p>Lihat avatar penari bergerak dari data sensor, pantau grafik 9 sumbu per node, baca kuaternion, dan rekam sesi.</p>
+          <span class="room-go">Buka Studio →</span>
+        </a>
+        <a class="room frame" href="#kelas">
+          <img class="room-icon" src="assets/3d/dial.webp" alt="" width="120" height="120" loading="lazy">
+          <h3>Kelas Tari</h3>
+          <p>Bandingkan gerak siswa dengan maestro. AI memberi skor kemiripan, galat sudut per sendi, dan saran perbaikan.</p>
+          <span class="room-go">Buka Kelas →</span>
+        </a>
+        <a class="room frame" href="#arsip">
+          <img class="room-icon" src="assets/3d/lontar.webp" alt="" width="120" height="120" loading="lazy">
+          <h3>Arsip Nusantara</h3>
+          <p>Jelajahi data tari dari Jawa, Bali, dan daerah lain, beserta ragam geraknya dan sesi rekaman yang sudah disimpan.</p>
+          <span class="room-go">Buka Arsip →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="arsip-tari" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Arsip tari</p>
+      <h2 class="h2">Enam tari dalam arsip demo</h2>
+      <div id="landing-dances" class="dance-mini"></div>
+    </div>
+  </section>
+
+  <div class="rule" aria-hidden="true"><span>꧅</span></div>
+
+  <section id="kredit" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Sumber data &amp; kredit</p>
+      <h2 class="h2">Dibangun di atas data terbuka</h2>
+      <ul class="credits-list">
+        <li><b>Gerak dasar tari Bali</b> — I N. R. Hendrawan dkk. <i>Video Dataset of Woman / Male Basic Balinese Dance Movement for Action Recognition</i>, Mendeley Data (doi:10.17632/s2gv9d6gpb, 10.17632/tr9py7hzj4), CC BY 4.0. Dipakai untuk model Kamera AI dan gerak acuan Kelas Tari.</li>
+        <li><b>AIST++</b> — R. Li dkk., <i>AI Choreographer</i>, ICCV 2021; anotasi CC BY 4.0 (Google), video AIST Dance Video Database. Dipakai untuk rekaman mocap di Studio dan uji IMU sintetis 10 node.</li>
+        <li><b>Turkish Folk Dance IMU Dataset</b> — berkaykarakis (Kaggle), CC BY 4.0. Dipakai untuk menguji pengenal tari dari sensor.</li>
+        <li><b>Biomekanika tari Jawa</b> — M. Escobar Varela &amp; L. Hernández-Barraza, <i>Digital Dance Scholarship</i>, Digital Scholarship in the Humanities (2019), github.com/villaorlado/dance. Dipakai untuk analisis karakter alus–gagah (internal).</li>
+        <li><b>Tari Lenggang Nyai</b> — <i>Cool Tour Dance</i>, Imagine Cup Indonesia 2013, github.com/nandafirdaus/cool-tour-dance. Dipakai untuk riset gerak Betawi (internal).</li>
+        <li><b>Model 3D</b> — “Arjuna — Wayang Golek” oleh Virtual Museums of Małopolska (CC0); “GAMELAN JAWA” oleh eventdesignws, “Borobudur temple” oleh giga, “Rumah Joglo Jawa” oleh mokhammadsoni (CC BY 4.0, Sketchfab).</li>
+        <li><b>Animasi 3D</b> — Motion2MixamoRig (MaxLiu22, Apache 2.0) dengan GVHMR, HaMeR, model tubuh SMPL-X dan MANO (MPI, lisensi riset non-komersial), karakter Y Bot (Adobe Mixamo).</li>
+        <li><b>SAM 3D Body</b> — Meta, SAM License. Dipakai untuk pose 3D seluruh tubuh dan jari dari video gerak dasar tari Bali (Studio · gerak dasar Bali 3D).</li>
+        <li><b>Pustaka</b> — MediaPipe Pose (Google, Apache 2.0), ONNX Runtime Web (Microsoft, MIT), RTMW/rtmlib (OpenMMLab, Apache 2.0).</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="rule" aria-hidden="true"><span>꧅</span></div>
+
+  <section id="tim" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Tim pengembang</p>
+      <h2 class="h2">Orang-orang di balik NaraMotion</h2>
+      <div class="schools">
+        <div class="school frame">
+          <h3 class="school-name">SMANSA</h3>
+          <ul class="team">
+            <li class="member"><span class="medal" aria-hidden="true">K</span><span class="m-name">Kim Arumi Malika Putri</span></li>
+            <li class="member"><span class="medal" aria-hidden="true">A</span><span class="m-name">Afra Na’ila Arkana</span></li>
+            <li class="member"><span class="medal" aria-hidden="true">A</span><span class="m-name">Anyaila Wahyu</span></li>
+          </ul>
+        </div>
+        <div class="school frame">
+          <h3 class="school-name">ABBS</h3>
+          <ul class="team">
+            <li class="member"><span class="medal" aria-hidden="true">K</span><span class="m-name">Khaifat Attallah Wibowo</span></li>
+            <li class="member"><span class="medal" aria-hidden="true">N</span><span class="m-name">Nabila Azalea</span></li>
+            <li class="member"><span class="medal" aria-hidden="true">K</span><span class="m-name">Khairan Athaya Wibowo</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta-band">
+    <div class="wrap cta-in frame">
+      <img class="emblem" src="assets/3d/gunungan.webp" alt="" width="120" height="120" loading="lazy">
+      <h2 class="h2">Mulai dari satu gerak ukel</h2>
+      <p>Daftar dengan email atau akun Google, lalu coba Studio sekarang. Studio berjalan dengan data sensor simulasi, jadi tidak perlu perangkat.</p>
+      <div class="hero-cta center">
+        <a class="btn btn-gold" href="#studio">Masuk Studio</a>
+        <a class="btn btn-line" href="#kelas">Coba Kelas Tari</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========================= APLIKASI ========================= -->
+<div id="app" hidden>
+  <div class="wrap app-head">
+    <div>
+      <p class="eyebrow">Ruang kerja NaraMotion</p>
+      <h1 class="app-title" id="app-title">Studio Rekam</h1>
+    </div>
+    <div class="tabs" id="app-tabs" role="tablist" aria-label="Ruang kerja">
+      <a role="tab" href="#studio" data-tab="studio">Studio</a>
+      <a role="tab" href="#kelas" data-tab="kelas">Kelas</a>
+      <a role="tab" href="#arsip" data-tab="arsip">Arsip</a>
+    </div>
+  </div>
+
+  <!-- MASUK / DAFTAR -->
+  <section id="view-auth" class="wrap view" hidden>
+    <div class="auth-card frame">
+      <img class="emblem" src="assets/3d/gunungan.webp" alt="" width="96" height="96">
+      <p class="auth-note" id="auth-note">Masuk untuk membuka Studio, Kelas, dan Arsip.</p>
+      <div class="seg auth-switch" id="auth-switch" role="group" aria-label="Pilih masuk atau daftar">
+        <button type="button" data-mode="login" aria-pressed="true">Masuk</button>
+        <button type="button" data-mode="signup" aria-pressed="false">Daftar akun baru</button>
+      </div>
+      <form id="auth-form" class="auth-form" novalidate>
+        <label class="field" id="f-name-wrap" hidden><span>Nama lengkap</span>
+          <input id="f-name" type="text" autocomplete="name" maxlength="60" placeholder="Nama yang tampil di Arsip">
+        </label>
+        <label class="field"><span>Email</span>
+          <input id="f-email" type="email" autocomplete="email" required placeholder="nama@sekolah.sch.id">
+        </label>
+        <label class="field"><span>Kata sandi</span>
+          <input id="f-pass" type="password" autocomplete="current-password" minlength="6" required placeholder="Minimal 6 karakter">
+        </label>
+        <p class="auth-error" id="auth-error" role="alert" hidden></p>
+        <button class="btn btn-gold" type="submit" id="auth-submit">Masuk</button>
+        <div class="auth-or"><span>atau</span></div>
+        <button class="btn btn-line" type="button" id="auth-google">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3zM12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22zm-5.6-8a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9l3.3-2.5zM12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>
+          Masuk dengan Google
+        </button>
+        <button class="link-btn" type="button" id="auth-reset">Lupa kata sandi?</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- STUDIO -->
+  <section id="view-studio" class="wrap view" aria-labelledby="app-title" hidden>
+    <div class="toolbar frame">
+      <label class="field"><span>Tari</span>
+        <select id="studio-dance"></select>
+      </label>
+      <div class="field"><span>Kecepatan</span>
+        <div class="seg" id="studio-speed" role="group" aria-label="Kecepatan putar">
+          <button type="button" data-speed="0.5">0,5×</button>
+          <button type="button" data-speed="1" aria-pressed="true">1×</button>
+          <button type="button" data-speed="1.5">1,5×</button>
+        </div>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" class="btn btn-line btn-sm" id="studio-play">Jeda</button>
+        <button type="button" class="btn btn-line btn-sm" id="studio-cam">Putar kamera: aktif</button>
+        <button type="button" class="btn btn-gold btn-sm" id="studio-rec"><span class="rec-dot"></span><span id="studio-rec-label">Rekam</span></button>
+      </div>
+      <p class="sim-badge" title="Data dibangkitkan dari model gerak, bukan dari perangkat fisik">Mode simulasi · 10/10 node · 100 Hz</p>
+    </div>
+
+    <div class="studio-grid">
+      <div class="stage-card frame">
+        <canvas id="studio-canvas" class="stage" aria-label="Avatar penari 3D. Seret untuk memutar sudut pandang."></canvas>
+        <div class="stage-hud">
+          <span id="studio-clock" class="mono">00:00.0</span>
+          <span id="studio-rec-info" class="mono rec-info" hidden>● REC 00:00</span>
+        </div>
+        <p class="stage-hint">Seret avatar untuk memutar sudut pandang</p>
+      </div>
+
+      <aside class="side">
+        <div class="panel frame">
+          <h2 class="panel-title">Node sensor</h2>
+          <div id="node-list" class="node-list" role="group" aria-label="Pilih node sensor"></div>
+        </div>
+        <div class="panel frame">
+          <h2 class="panel-title">Orientasi <span id="q-node" class="muted">Pergelangan kanan</span></h2>
+          <div class="quat mono">
+            <div><span>w</span><b id="q-w">1.000</b></div>
+            <div><span>x</span><b id="q-x">0.000</b></div>
+            <div><span>y</span><b id="q-y">0.000</b></div>
+            <div><span>z</span><b id="q-z">0.000</b></div>
+          </div>
+          <div class="euler mono">
+            <div><span>Roll</span><b id="e-r">0°</b></div>
+            <div><span>Pitch</span><b id="e-p">0°</b></div>
+            <div><span>Yaw</span><b id="e-y">0°</b></div>
+          </div>
+          <p class="fine">Fusi Madgwick · β = 0,041 · kuaternion satuan</p>
+        </div>
+        <div class="panel frame">
+          <h2 class="panel-title">Pengenalan ragam gerak <span class="muted">AI</span></h2>
+          <ul id="motif-list" class="motif-list"></ul>
+          <p class="fine">Prediksi model untuk jendela 2 detik terakhir.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="scopes">
+      <figure class="scope frame">
+        <figcaption><b>Akselerometer</b> <span class="muted">m/s²</span> <span class="legend"><i class="lx">x</i><i class="ly">y</i><i class="lz">z</i></span> <span class="mono read" id="r-acc"></span></figcaption>
+        <canvas id="scope-acc"></canvas>
+      </figure>
+      <figure class="scope frame">
+        <figcaption><b>Giroskop</b> <span class="muted">°/s</span> <span class="legend"><i class="lx">x</i><i class="ly">y</i><i class="lz">z</i></span> <span class="mono read" id="r-gyr"></span></figcaption>
+        <canvas id="scope-gyr"></canvas>
+      </figure>
+      <figure class="scope frame">
+        <figcaption><b>Magnetometer</b> <span class="muted">µT</span> <span class="legend"><i class="lx">x</i><i class="ly">y</i><i class="lz">z</i></span> <span class="mono read" id="r-mag"></span></figcaption>
+        <canvas id="scope-mag"></canvas>
+      </figure>
+    </div>
+  </section>
+
+  <!-- KELAS -->
+  <section id="view-kelas" class="wrap view" hidden>
+    <div class="toolbar frame" id="kelas-toolbar">
+      <label class="field"><span>Tari</span>
+        <select id="kelas-dance"></select>
+      </label>
+      <label class="field field-range"><span>Tingkat siswa <b id="kelas-skill-val">Menengah</b></span>
+        <input type="range" id="kelas-skill" min="0" max="100" value="55">
+      </label>
+      <div class="toolbar-actions">
+        <button type="button" class="btn btn-line btn-sm" id="kelas-play">Jeda</button>
+      </div>
+      <div class="seg" id="kelas-mode" role="group" aria-label="Mode kelas">
+        <button type="button" data-mode="sim" aria-pressed="true">Simulasi</button>
+        <button type="button" data-mode="cam" aria-pressed="false">Kamera AI</button>
+      </div>
+      <p class="sim-badge" id="kelas-badge">Siswa contoh · data simulasi</p>
+    </div>
+
+    <div id="kelas-cam" class="cam-wrap" hidden>
+      <div class="toolbar frame">
+        <label class="field"><span>Dataset gerak dasar Bali</span><select id="cam-dataset"></select></label>
+        <label class="field"><span>Gerak yang dilatih</span><select id="cam-target"></select></label>
+        <div class="toolbar-actions">
+          <button type="button" class="btn btn-gold btn-sm" id="cam-start">Nyalakan kamera</button>
+          <label class="btn btn-line btn-sm cam-upload">Unggah video<input type="file" id="cam-file" accept="video/*" hidden></label>
+          <button type="button" class="btn btn-line btn-sm" id="cam-stop">Hentikan</button>
+        </div>
+        <p class="cam-status mono" id="cam-status" role="status">Pilih dataset, lalu nyalakan kamera atau unggah video.</p>
+      </div>
+      <div class="kelas-grid">
+        <figure class="stage-card frame cam-view">
+          <figcaption class="stage-label">Kamera <span class="muted">diproses di perangkatmu</span></figcaption>
+          <video id="cam-video" playsinline muted></video>
+          <canvas id="cam-overlay"></canvas>
+        </figure>
+        <figure class="stage-card frame">
+          <figcaption class="stage-label">Gerak acuan <span class="muted">bayangan = kamu</span></figcaption>
+          <canvas id="cam-template" class="stage stage-sm"></canvas>
+        </figure>
+        <aside class="panel frame score-panel">
+          <h2 class="panel-title">Skor kemiripan</h2>
+          <div class="gauge-num cam-score"><b id="cam-score">–</b><span>/ 100</span></div>
+          <p class="grade" id="cam-grade">Menunggu gerakan…</p>
+          <h3 class="panel-sub">Gerak terdeteksi <span class="muted">AI</span></h3>
+          <ul class="motif-list" id="cam-top"></ul>
+          <p class="cam-note">Model dilatih dari 1.740 + 828 video penari Bali (Mendeley Data, CC BY 4.0). Video tidak dikirim ke server.</p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="kelas-grid" id="kelas-sim">
+      <figure class="stage-card frame">
+        <figcaption class="stage-label">Maestro <span class="muted">referensi arsip</span></figcaption>
+        <canvas id="kelas-ref" class="stage stage-sm"></canvas>
+      </figure>
+      <figure class="stage-card frame">
+        <figcaption class="stage-label">Siswa <span class="muted">bayangan = maestro</span></figcaption>
+        <canvas id="kelas-stu" class="stage stage-sm"></canvas>
+      </figure>
+      <aside class="panel frame score-panel">
+        <h2 class="panel-title">Skor kemiripan</h2>
+        <div class="gauge">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="50" class="g-track"/>
+            <circle cx="60" cy="60" r="50" class="g-val" id="gauge-arc"/>
+          </svg>
+          <div class="gauge-num"><b id="score-num">0</b><span>/ 100</span></div>
+        </div>
+        <p class="grade" id="score-grade">Menghitung…</p>
+        <div class="metrics mono">
+          <div><span>Selisih waktu</span><b id="m-lag">0,00 s</b></div>
+          <div><span>Jarak DTW</span><b id="m-dtw">0,00</b></div>
+        </div>
+        <canvas id="score-spark" class="spark" aria-label="Riwayat skor 30 detik terakhir"></canvas>
+      </aside>
+    </div>
+
+    <div class="kelas-bottom">
+      <div class="panel frame">
+        <h2 class="panel-title">Galat sudut per sendi</h2>
+        <div class="table-wrap">
+          <table class="joints">
+            <thead><tr><th scope="col">Node</th><th scope="col">Galat</th><th scope="col" class="bar-col">Sebaran</th><th scope="col">Status</th></tr></thead>
+            <tbody id="joint-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel frame">
+        <h2 class="panel-title">Saran dari pelatih AI</h2>
+        <ul id="feedback" class="feedback"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARSIP -->
+  <section id="view-arsip" class="wrap view" hidden>
+    <h2 class="h3">Koleksi tari</h2>
+    <div id="dance-cards" class="dance-cards"></div>
+
+    <h2 class="h3">Gerak dasar tari Bali</h2>
+    <div id="bali-cards" class="dance-cards"></div>
+
+    <h2 class="h3">Animasi 3D dari video penari</h2>
+    <p class="fine anim-note">Ke-24 gerak dasar Bali dipindahkan dari video penari ke karakter 3D (GVHMR + HaMeR lewat Motion2MixamoRig). Pilih gerak, lalu seret untuk memutar, cubit atau gulir untuk memperbesar.</p>
+    <div class="anim-viewer frame">
+      <div class="anim-bar">
+        <div class="seg" role="tablist" aria-label="Kelompok gerak">
+          <button type="button" role="tab" class="seg-btn" data-ads="putri" aria-selected="true">Putri · 13</button>
+          <button type="button" role="tab" class="seg-btn" data-ads="putra" aria-selected="false">Putra · 11</button>
+        </div>
+        <div class="chips" id="anim-moves"></div>
+      </div>
+      <div class="anim-stage">
+        <model-viewer id="anim-mv" autoplay camera-controls touch-action="pan-y" exposure="1.1" shadow-intensity="1" camera-orbit="0deg 80deg auto" alt="Animasi 3D gerak tari Bali"></model-viewer>
+        <figure class="anim-cmp">
+          <video id="anim-vid" muted loop playsinline autoplay preload="metadata"></video>
+          <figcaption>Video asli · kerangka 3D · karakter</figcaption>
+        </figure>
+      </div>
+      <div class="anim-foot">
+        <p id="anim-cap" class="anim-cap"></p>
+        <button type="button" class="btn btn-gold btn-sm" id="anim-practice">Latih gerak ini</button>
+      </div>
+      <p class="fine" id="anim-warn" hidden></p>
+    </div>
+
+    <h2 class="h3">Sesi rekaman</h2>
+    <div class="panel frame">
+      <div id="sessions-empty" class="empty">
+        <img class="emblem sm" src="assets/3d/lontar.webp" alt="" width="96" height="96" loading="lazy">
+        <p>Belum ada sesi rekaman. Buka <a href="#studio">Studio</a>, pilih tari, lalu tekan <b>Rekam</b>.</p>
+      </div>
+      <p class="fine" id="sync-status">Memeriksa koneksi Firebase…</p>
+      <div class="table-wrap">
+        <table class="sessions" id="sessions-table" hidden>
+          <thead><tr><th scope="col">Waktu</th><th scope="col">Tari</th><th scope="col">Oleh</th><th scope="col">Durasi</th><th scope="col">Frame</th><th scope="col"><span class="sr">Aksi</span></th></tr></thead>
+          <tbody id="session-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Ruang kerja (seluler)">
+    <a href="#studio" data-tab="studio"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><path d="M12 7.5v6M12 13.5l-3.5 6M12 13.5l3.5 6M6 9.5l6 1.5 6-1.5"/></svg><span>Studio</span></a>
+    <a href="#kelas" data-tab="kelas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M7 11.5V16c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-4.5"/></svg><span>Kelas</span></a>
+    <a href="#arsip" data-tab="arsip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="5" rx="1.5"/><path d="M5 9v10h14V9M10 13h4"/></svg><span>Arsip</span></a>
+  </nav>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <div>
+      <p class="brand-name">NaraMotion</p>
+      <p class="fine">An AI-Driven 9-DoF MARG Motion Capture Platform for Nusantara Cultural Dance Digitization and Student Education</p>
+    </div>
+    <p class="fine">© 2026 Tim NaraMotion · Data pada aplikasi ini adalah simulasi untuk demonstrasi.</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

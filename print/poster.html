@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>NaraMotion — Poster A0</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Javanese:wght@400;600&display=block">
+<link rel="stylesheet" href="print.css">
+<style>
+  @page { size: 841mm 1189mm; margin: 0; }
+  html, body { width: 841mm; height: 1189mm; }
+  body { font-size: 9.2mm; line-height: 1.38; }
+  .sheet { position: relative; width: 841mm; height: 1189mm; overflow: hidden; padding: 40mm 44mm 34mm; }
+  .sheet::before { content: ""; position: absolute; inset: 0; background: url(../assets/batik/kawung.svg) 0 0 / 120mm; opacity: .022; }
+  .sheet::after { content: ""; position: absolute; inset: 14mm; border: .7mm solid var(--line-strong); border-radius: 10mm; pointer-events: none; }
+  .glow { position: absolute; left: -120mm; top: 170mm; width: 620mm; height: 620mm; border-radius: 50%;
+          background: radial-gradient(circle, rgba(236,201,120,.20), rgba(236,201,120,0) 62%); }
+
+  /* Kepala */
+  .top { position: relative; display: flex; justify-content: space-between; align-items: flex-start; }
+  .aksara { font-size: 15mm; margin: 0; }
+  .eyebrow { font-size: 6.4mm; margin: 2mm 0 0; }
+  .qr-top { text-align: right; font: 500 5.6mm/1.3 var(--f-mono); color: var(--muted); letter-spacing: .08em; }
+  .title { position: relative; font: 800 104mm/0.95 var(--f-display); margin: 6mm 0 0 -3mm; letter-spacing: .01em; }
+  .sub { position: relative; font: italic 400 10.4mm/1.25 var(--f-body); color: var(--gold-pale); margin: 6mm 0 0; max-width: 700mm; }
+  .lead { position: relative; font-size: 11.6mm; line-height: 1.32; color: var(--cream); margin: 7mm 0 0; max-width: 690mm; }
+
+  /* Hero */
+  .hero { position: relative; display: grid; grid-template-columns: 250mm 1fr; grid-template-rows: 340mm; gap: 20mm; margin-top: 12mm; }
+  .dancer { position: relative; height: 340mm; min-height: 0; display: flex; align-items: flex-end; justify-content: center; }
+  .dancer img { height: 340mm; width: auto; object-fit: contain; filter: drop-shadow(0 8mm 14mm rgba(0,0,0,.6)); }
+  .dancer .tag { position: absolute; left: 0; bottom: 4mm; font: 500 5.2mm/1.3 var(--f-mono); color: var(--dim); letter-spacing: .1em; text-transform: uppercase; }
+  .right { display: flex; flex-direction: column; justify-content: space-between; min-height: 0; padding: 4mm 0 6mm; }
+  .quote { font: 600 19mm/1.16 var(--f-display); color: var(--gold-bright); margin: 0; }
+  .quote em { font-style: normal; color: var(--gold-pale); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6mm; }
+  .stat { padding: 7mm 4mm 6mm; text-align: center; }
+  .stat b { display: block; font: 700 22mm/1 var(--f-display); color: var(--gold-bright); }
+  .stat span { display: block; margin-top: 3mm; font: 500 5.4mm/1.25 var(--f-mono); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .spaces { display: grid; gap: 6mm; }
+  .space { display: grid; grid-template-columns: 34mm 1fr; gap: 7mm; align-items: center; padding: 7mm 9mm; }
+  .space img { width: 34mm; height: 34mm; }
+  .space h3 { font: 600 11mm/1.1 var(--f-display); color: var(--gold-bright); margin: 0 0 1.5mm; }
+  .space p { margin: 0; font-size: 8.4mm; line-height: 1.32; color: var(--cream); }
+
+  /* Cara kerja */
+  .sec-title { display: flex; align-items: baseline; gap: 8mm; margin: 0 0 7mm; }
+  .sec-title h2 { font: 700 15mm/1 var(--f-display); color: var(--gold-bright); margin: 0; }
+  .sec-title span { font: 500 6mm/1 var(--f-mono); color: var(--gold); letter-spacing: .16em; text-transform: uppercase; }
+  .how { position: relative; margin-top: 12mm; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8mm; }
+  .step { padding: 8mm 8mm 9mm; position: relative; }
+  .step .num { font: 700 9mm/1 var(--f-display); color: var(--gold-deep); }
+  .step img { position: absolute; right: 6mm; top: 5mm; width: 30mm; height: 30mm; }
+  .step h3 { font: 600 10.4mm/1.1 var(--f-display); color: var(--gold-bright); margin: 14mm 0 3mm; }
+  .step p { margin: 0; font-size: 7.4mm; line-height: 1.34; color: var(--cream); }
+
+  /* Sensor + node */
+  .hw { position: relative; display: grid; grid-template-columns: 1fr 250mm; gap: 10mm; margin-top: 12mm; }
+  .sensors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7mm; }
+  .sensor { padding: 7mm 7mm 8mm; text-align: center; }
+  .sensor img { width: 32mm; height: 32mm; }
+  .sensor h3 { font: 600 9.4mm/1.1 var(--f-display); color: var(--gold-bright); margin: 2mm 0 2.5mm; }
+  .sensor .chip { font: 500 6mm/1.35 var(--f-mono); color: var(--gold-pale); }
+  .sensor p { margin: 3mm 0 0; font-size: 6.6mm; line-height: 1.32; color: var(--muted); }
+  .node { padding: 8mm 9mm; display: grid; grid-template-columns: 74mm 1fr; gap: 6mm; align-items: center; }
+  .node svg { width: 74mm; height: auto; }
+  .node h3 { font: 600 9.6mm/1.1 var(--f-display); color: var(--gold-bright); margin: 0 0 3mm; }
+  .node ol { margin: 0; padding-left: 7mm; font-size: 6.5mm; line-height: 1.4; color: var(--cream); }
+  .node ol li::marker { color: var(--gold); font-family: var(--f-mono); }
+
+  /* Warisan */
+  .heritage { position: relative; margin: 12mm -44mm 0; padding: 12mm 44mm 10mm; }
+  .heritage::before { content: ""; position: absolute; inset: 0; background: url(../assets/batik/parang.svg) 0 0 / 150mm; opacity: .09; }
+  .heritage::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: .7mm; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .models { position: relative; display: grid; grid-template-columns: 0.62fr 1.25fr 1fr 1.35fr; gap: 8mm; align-items: end; height: 124mm; }
+  .model { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+  .model img { max-height: 100mm; max-width: 100%; object-fit: contain; filter: drop-shadow(0 4mm 7mm rgba(0,0,0,.55)); }
+  .model figcaption { margin-top: 4mm; font: 600 8.4mm/1.1 var(--f-display); color: var(--gold-bright); text-align: center; }
+  .model figcaption small { display: block; margin-top: 1.2mm; font: 400 5.4mm/1.25 var(--f-body); color: var(--muted); }
+  .dances { position: relative; display: flex; flex-wrap: wrap; gap: 4mm; margin-top: 9mm; align-items: center; }
+  .dances .lbl { font: 500 6mm/1 var(--f-mono); color: var(--gold); letter-spacing: .14em; text-transform: uppercase; margin-right: 3mm; }
+  .pill { padding: 3mm 7mm; border-radius: 99mm; font: 500 7mm/1.2 var(--f-body); color: var(--gold-pale); }
+  .pill small { color: var(--dim); font-size: 5.4mm; margin-left: 2mm; }
+
+  /* Kaki */
+  .foot { position: absolute; left: 44mm; right: 44mm; bottom: 34mm; display: grid; grid-template-columns: 1fr 1fr 150mm; gap: 10mm; align-items: end; }
+  .school h4 { font: 700 9.6mm/1 var(--f-display); color: var(--gold-bright); margin: 0 0 3mm; letter-spacing: .06em; }
+  .school p { margin: 0; font-size: 6.8mm; line-height: 1.4; color: var(--cream); }
+  .cta { display: grid; grid-template-columns: 52mm 1fr; gap: 6mm; align-items: center; padding: 6mm; }
+  .cta img { width: 52mm; height: 52mm; border-radius: 2mm; }
+  .cta b { display: block; font: 600 7.6mm/1.2 var(--f-display); color: var(--gold-bright); }
+  .cta span { display: block; margin-top: 2mm; font: 500 5.4mm/1.3 var(--f-mono); color: var(--gold-pale); }
+  .credits { position: absolute; left: 44mm; right: 44mm; bottom: 20mm; margin: 0; font: 400 4.2mm/1.35 var(--f-body); color: var(--dim); }
+  .credits b { color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="glow"></div>
+
+  <header class="top">
+    <div>
+      <p class="aksara">꧁ ꦤꦫ ꧂</p>
+      <p class="eyebrow">Motion Capture · 9-DoF MARG · Kecerdasan Buatan</p>
+    </div>
+    <div class="qr-top">naramotion.web.app</div>
+  </header>
+  <h1 class="title gold-text">NaraMotion</h1>
+  <p class="sub">An AI-Driven 9-DoF MARG Motion Capture Platform for Nusantara Cultural Dance Digitization and Student Education</p>
+  <p class="lead">Merekam gerak tari Nusantara dalam tiga dimensi, menyimpannya sebagai arsip digital, dan mengajarkannya kembali kepada siswa dengan umpan balik per sendi.</p>
+
+  <section class="hero">
+    <div class="dancer">
+      <img src="img/penari.webp" alt="Penari Gambyong berupa patung emas berbusana kemben, jarik, dan sampur">
+      <span class="tag">Model 3D · pose Gambyong</span>
+    </div>
+    <div class="right">
+      <p class="quote">Tari diwariskan lewat tubuh. <em>NaraMotion menyimpannya sebagai data.</em></p>
+      <div class="stats">
+        <div class="stat frame"><b>10</b><span>node sensor</span></div>
+        <div class="stat frame"><b>9</b><span>sumbu per node</span></div>
+        <div class="stat frame"><b>100</b><span>Hz fusi</span></div>
+        <div class="stat frame"><b>24</b><span>gerak Bali · AI</span></div>
+      </div>
+      <div class="spaces">
+        <div class="space frame"><img src="../assets/3d/dial.webp" alt=""><div><h3>Studio Rekam</h3><p>Avatar penari bergerak dari data sensor, grafik 9 sumbu per node, kuaternion, dan rekam sesi.</p></div></div>
+        <div class="space frame"><img src="../assets/3d/gunungan.webp" alt=""><div><h3>Kelas Tari</h3><p>Kamera AI mengenali 24 gerak dasar tari Bali dan menilai tiap sendi; skor kemiripan dan saran perbaikan langsung.</p></div></div>
+        <div class="space frame"><img src="../assets/3d/lontar.webp" alt=""><div><h3>Arsip Nusantara</h3><p>Data tari dari Jawa, Bali, dan daerah lain, lengkap dengan ragam gerak dan sesi rekaman.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="sec-title"><h2>Cara kerja</h2><span>Empat tahap</span></div>
+    <div class="steps">
+      <div class="step frame"><div class="num">I</div><img src="../assets/3d/node.webp" alt=""><h3>Pasang sensor</h3><p>Sepuluh node di kepala, badan, lengan, paha, dan betis, tersembunyi di balik kostum.</p></div>
+      <div class="step frame"><div class="num">II</div><img src="../assets/3d/gyro.webp" alt=""><h3>Fusi sensor</h3><p>Filter Madgwick mengubah sembilan sumbu menjadi kuaternion orientasi tiap segmen, 100 kali per detik.</p></div>
+      <div class="step frame"><div class="num">III</div><img src="../assets/3d/dial.webp" alt=""><h3>Analisis AI</h3><p>Model sekuens mengenali ukel, seblak sampur, atau gedrug, lalu membandingkan siswa dengan maestro.</p></div>
+      <div class="step frame"><div class="num">IV</div><img src="../assets/3d/lontar.webp" alt=""><h3>Arsip &amp; kelas</h3><p>Gerak disimpan sebagai arsip. Siswa berlatih dan menerima skor serta saran per sendi.</p></div>
+    </div>
+  </section>
+
+  <section class="hw">
+    <div>
+      <div class="sec-title"><h2>Sensor 9-DoF MARG</h2><span>GY-85 · I²C</span></div>
+      <div class="sensors">
+        <div class="sensor frame"><img src="../assets/3d/accel.webp" alt=""><h3>Akselerometer</h3><div class="chip">ADXL345 · ±16 g</div><p>Gravitasi dan percepatan: kemiringan segmen dan hentakan kaki.</p></div>
+        <div class="sensor frame"><img src="../assets/3d/gyro.webp" alt=""><h3>Giroskop</h3><div class="chip">ITG-3205 · ±2000 °/s</div><p>Kecepatan putar: gerak cepat dan halus seperti ukel.</p></div>
+        <div class="sensor frame"><img src="../assets/3d/mag.webp" alt=""><h3>Magnetometer</h3><div class="chip">HMC5883L / QMC5883L</div><p>Kompas medan bumi: arah hadap penari tidak bergeser.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-title"><h2>Satu node</h2><span>×10</span></div>
+      <div class="node frame">
+        <svg viewBox="0 0 120 200" aria-label="Posisi 10 node di tubuh">
+          <g fill="none" stroke="#8d6a2c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="60" cy="22" r="13"/>
+            <path d="M60 35V100"/>
+            <path d="M60 46L36 74L26 104M60 46L84 74L94 104"/>
+            <path d="M60 100L46 146L42 192M60 100L74 146L78 192"/>
+          </g>
+          <g fill="#ecc978" stroke="#1b150d" stroke-width="1.5">
+            <circle cx="60" cy="22" r="5"/><circle cx="60" cy="66" r="5"/>
+            <circle cx="47" cy="61" r="5"/><circle cx="73" cy="61" r="5"/>
+            <circle cx="31" cy="89" r="5"/><circle cx="89" cy="89" r="5"/>
+            <circle cx="53" cy="123" r="5"/><circle cx="67" cy="123" r="5"/>
+            <circle cx="44" cy="169" r="5"/><circle cx="76" cy="169" r="5"/>
+          </g>
+        </svg>
+        <div>
+          <h3>Isi tiap node</h3>
+          <ol>
+            <li>ESP32-C3 Super Mini</li>
+            <li>Sensor 9-DoF GY-85</li>
+            <li>Layar status OLED</li>
+            <li>Li-Po pipih 1000 mAh</li>
+            <li>Modul cas USB-C</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="heritage">
+    <div class="sec-title" style="position:relative"><h2>Warisan yang dijaga</h2><span>Budaya Nusantara dalam 3D</span></div>
+    <div class="models">
+      <figure class="model"><img src="img/arjuna.webp" alt="Wayang golek Arjuna"><figcaption>Arjuna<small>wayang golek</small></figcaption></figure>
+      <figure class="model"><img src="img/gamelan.webp" alt="Seperangkat gamelan Jawa"><figcaption>Gamelan<small>pengiring tari</small></figcaption></figure>
+      <figure class="model"><img src="img/borobudur.webp" alt="Stupa Candi Borobudur"><figcaption>Borobudur<small>stupa candi</small></figcaption></figure>
+      <figure class="model"><img src="img/joglo.webp" alt="Rumah joglo Jawa"><figcaption>Joglo<small>pendapa tempat menari</small></figcaption></figure>
+    </div>
+    <div class="dances">
+      <span class="lbl">Arsip demo</span>
+      <span class="pill frame">Gambyong<small>Surakarta</small></span>
+      <span class="pill frame">Bedhaya Ketawang<small>Surakarta</small></span>
+      <span class="pill frame">Serimpi<small>Yogyakarta</small></span>
+      <span class="pill frame">Pendet<small>Bali</small></span>
+      <span class="pill frame">Jaipongan<small>Jawa Barat</small></span>
+      <span class="pill frame">Remo<small>Jawa Timur</small></span>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="school"><h4>SMANSA</h4><p>Kim Arumi Malika Putri<br>Afra Na’ila Arkana<br>Anyaila Wahyu</p></div>
+    <div class="school"><h4>ABBS</h4><p>Khaifat Attallah Wibowo<br>Nabila Azalea<br>Khairan Athaya Wibowo</p></div>
+    <div class="cta frame"><img src="img/qr.svg" alt="Kode QR naramotion.web.app"><div><b>Coba Studio sekarang</b><span>naramotion.web.app</span></div></div>
+  </footer>
+  <p class="credits"><b>Model 3D Sketchfab (dirender ulang dengan pencahayaan baru):</b> “Arjuna — Wayang Golek theatre puppet” oleh Virtual Museums of Małopolska (CC0); “GAMELAN JAWA” oleh eventdesignws (CC BY 4.0); “Borobudur temple” oleh giga (CC BY 4.0); “Rumah Joglo Jawa” oleh mokhammadsoni (CC BY 4.0) — sketchfab.com. Penari, ikon, dan batik dibuat oleh tim NaraMotion. Demo aplikasi saat ini memakai data sensor simulasi. <b>Data gerak:</b> Hendrawan dkk., Video Dataset of Woman/Male Basic Balinese Dance Movement (Mendeley Data, CC BY 4.0); AIST++ (Li dkk., ICCV 2021, CC BY 4.0); Turkish Folk Dance IMU (berkaykarakis, CC BY 4.0).</p>
+</div>
+</body>
+</html>

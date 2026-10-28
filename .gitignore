@@ -1,0 +1,22 @@
+# Data mentah & hasil besar (disimpan di Kaggle / lokal, bukan di git)
+assets_src/
+ml/data/
+ml/runs/
+media/*.mp4
+*.blend1
+
+# Rahasia & konfigurasi lokal
+.env*
+**/kaggle.json
+**/hf_token*
+*.pem
+*.key
+
+# Build / cache
+.firebase/
+__pycache__/
+*.pyc
+node_modules/
+paper/_*.html
+.DS_Store
+Thumbs.db

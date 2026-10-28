@@ -1,0 +1,13 @@
+{
+  "id": "mostoplesrinelan/naramotion-imu-turkish",
+  "title": "NaraMotion IMU Turkish",
+  "code_file": "train_imu.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": ["berkaykarakis/turkish-folk-dance-imu-dataset"],
+  "competition_sources": [],
+  "kernel_sources": []
+}

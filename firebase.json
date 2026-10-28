@@ -1,0 +1,37 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "database.rules.json",
+      ".firebaserc",
+      "**/.*",
+      "**/node_modules/**",
+      "blender/**",
+      "assets/3d/*.png",
+      "qa*.html",
+      "assets_src/**",
+      "tools/**",
+      "marketing/**",
+      "*.md",
+      "ml/**",
+      "media/**",
+      "print/**",
+      "PROMPT_SESI_BARU.md"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300"
+          }
+        ]
+      }
+    ]
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}

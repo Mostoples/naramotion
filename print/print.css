@@ -1,0 +1,31 @@
+/* Gaya bersama poster & brosur NaraMotion (palet emas-gelap dari css/style.css, satuan mm untuk cetak). */
+:root {
+  --ink: #1b150d;
+  --ink-2: #16110a;
+  --surface: #1e170e;
+  --line: rgba(210, 165, 74, .16);
+  --line-strong: rgba(210, 165, 74, .34);
+  --gold: #d2a54a;
+  --gold-bright: #ecc978;
+  --gold-pale: #f6e4b4;
+  --gold-deep: #8d6a2c;
+  --cream: #ebe0c6;
+  --muted: #a9987a;
+  --dim: #76674c;
+  --f-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --f-body: "Spectral", Georgia, "Times New Roman", serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --f-jawa: "Noto Sans Javanese", "Javanese Text", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--ink); color: var(--cream); font-family: var(--f-body);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+figure { margin: 0; }
+.aksara { font-family: var(--f-jawa); color: var(--gold); letter-spacing: .1em; }
+.eyebrow { font-family: var(--f-mono); font-weight: 500; color: var(--gold); letter-spacing: .18em; text-transform: uppercase; }
+.gold-text { background: linear-gradient(180deg, var(--gold-pale) 0%, var(--gold-bright) 38%, var(--gold) 70%, var(--gold-deep) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* Bingkai neumorf: permukaan sedikit terangkat + garis emas tipis */
+.frame { background: linear-gradient(145deg, rgba(255, 216, 150, .05), rgba(0, 0, 0, .18)), var(--surface);
+  border: .45mm solid var(--line); border-radius: 6mm;
+  box-shadow: 2mm 2mm 5mm rgba(0, 0, 0, .55), -1.4mm -1.4mm 4mm rgba(255, 216, 150, .045); }

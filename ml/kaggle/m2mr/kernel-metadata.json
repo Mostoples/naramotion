@@ -1,0 +1,15 @@
+{
+  "id": "mostoplesrinelan/naramotion-m2mr",
+  "title": "NaraMotion M2MR",
+  "code_file": "m2mr_batch.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "mostoplesrinelan/naramotion-m2mr-assets"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}

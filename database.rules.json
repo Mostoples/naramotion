@@ -1,0 +1,31 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "sessions": {
+      ".read": "auth != null",
+      ".indexOn": ["createdAt"],
+      "$id": {
+        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && !newData.exists() && data.child('uid').val() === auth.uid))",
+        ".validate": "newData.hasChildren(['dance', 'danceName', 'createdAt', 'duration', 'frameCount', 'rate', 'nodes', 'uid', 'ownerName'])",
+        "dance": { ".validate": "newData.isString() && newData.val().length <= 32" },
+        "danceName": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "createdAt": { ".validate": "newData.isNumber() && newData.val() <= now + 60000" },
+        "duration": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 61" },
+        "frameCount": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1300" },
+        "rate": { ".validate": "newData.isNumber()" },
+        "nodes": { ".validate": "newData.isNumber()" },
+        "uid": { ".validate": "newData.val() === auth.uid" },
+        "ownerName": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "$other": { ".validate": false }
+      }
+    },
+    "frames": {
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('sessions').child($id).child('uid').val() === auth.uid && (!data.exists() || !newData.exists())",
+        ".validate": "newData.isString() && newData.val().length <= 400000"
+      }
+    }
+  }
+}

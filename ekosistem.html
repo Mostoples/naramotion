@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive rich picture of the NaraMotion ecosystem: stakeholders, concerns, data flows and conflicts.">
+<title>NaraMotion Rich Picture</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;700&family=Caveat:wght@600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+/* layout: header + toolbar, then a pan/zoom radial mind map with a detail panel (right on desktop, below on phones); second tab shows the hand-drawn PNG */
+:root{--bg:#F6F0E4;--fg:#1E1810;--muted:#6E604B;--line:#D9CBAE;--panel:#FBF7EE;--accent:#8A5A12;
+--c-trad:#A0661A;--c-data:#2F6690;--c-plat:#8A5A12;--c-comp:#3E7C59;--c-soc:#6A4C93;--c-conf:#B23A2A;--c-concern:#7A6B55;--flow:#2F6690;
+--display:'Cormorant Garamond',Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hand:'Caveat','Comic Sans MS',cursive}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15110B;--fg:#F3EADA;--muted:#B9AC95;--line:#4A3C27;--panel:#1F1910;--accent:#D9A84E;
+--c-trad:#E0A250;--c-data:#7FB3D5;--c-plat:#D9A84E;--c-comp:#7CC59A;--c-soc:#B79BE0;--c-conf:#EE7A68;--c-concern:#B9AC95;--flow:#7FB3D5;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15110B;--fg:#F3EADA;--muted:#B9AC95;--line:#4A3C27;--panel:#1F1910;--accent:#D9A84E;
+--c-trad:#E0A250;--c-data:#7FB3D5;--c-plat:#D9A84E;--c-comp:#7CC59A;--c-soc:#B79BE0;--c-conf:#EE7A68;--c-concern:#B9AC95;--flow:#7FB3D5;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);padding-inline:16px;padding-block:20px 24px;box-sizing:border-box}
+.wrap{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.back{color:var(--accent);text-decoration:none;font-weight:500;font-size:14px}
+.back:hover{text-decoration:underline}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,42px);line-height:1.1;margin:0;text-wrap:balance}
+.sub{margin:0;color:var(--muted);max-width:75ch;line-height:1.5;font-size:15px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tabs{display:flex;gap:4px;margin-right:auto}
+button,.chip{font:500 14px var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+button[aria-pressed="true"],button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=search]{font:14px var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;min-width:0;width:200px}
+.chip{display:inline-flex;gap:6px;align-items:center}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 0 2px var(--bg)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px}
+@media (max-width:900px){.stage{grid-template-columns:minmax(0,1fr)}}
+.map{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--panel);height:min(78vh,860px);min-height:460px;overflow:hidden;touch-action:none}
+.map svg{width:100%;height:100%;display:block;cursor:grab;user-select:none}
+.map svg.drag{cursor:grabbing}
+.zoombox{position:absolute;right:10px;bottom:10px;display:flex;gap:6px}
+.zoombox button{background:var(--bg);width:38px;height:38px;padding:0;font-size:18px}
+.hint{position:absolute;left:12px;bottom:12px;font-size:13px;color:var(--muted);background:var(--bg);padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
+aside.detail{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0;align-self:start}
+.kind{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+.detail h2{font-family:var(--display);font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+.detail p{margin:0;line-height:1.55;font-size:15px}
+.quote{font-family:var(--hand);font-size:24px;line-height:1.2;color:var(--fg)}
+.links{display:flex;flex-direction:column;gap:6px}
+.links button{text-align:left;border-radius:10px;font-size:13.5px;line-height:1.35}
+.small{font-size:13px;color:var(--muted)}
+.png{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:#FBF6EA}
+.png img{display:block;width:100%;height:auto;cursor:zoom-in;max-width:none}
+.png.full img{width:4200px;cursor:zoom-out}
+text{font-family:var(--body)}
+.lbl{fill:var(--fg);font-size:16px}
+.lbl.leaf{font-size:15.5px}
+.lbl.concern{font-family:var(--hand);font-size:22px;fill:var(--c-concern)}
+.lbl.conflict{fill:var(--c-conf);font-weight:700}
+.node{cursor:pointer}
+.node:focus{outline:none}
+.node:focus-visible circle,.node:focus-visible rect{stroke-width:4}
+.edge{fill:none;stroke-width:2;opacity:.55}
+.xlink{fill:none;stroke:var(--flow);stroke-width:2.2;stroke-dasharray:7 6;opacity:.75}
+.xlink.gold{stroke:var(--c-plat)}
+.xlink.purple{stroke:var(--c-soc)}
+.dim{opacity:.13 !important}
+.hl .edge,.hl.edge{opacity:1;stroke-width:3.5}
+@media (prefers-reduced-motion:no-preference){.node,.edge,.xlink{transition:opacity .2s}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← Kembali ke NaraMotion</a>
+<h1>NaraMotion · rich picture</h1>
+<p class="sub">Who is involved in keeping Indonesian dance alive as motion data, what each group worries about, what flows between them, and where the tensions are. Click any node for details, click a branch to fold it, drag to pan, scroll or pinch to zoom.</p>
+<div class="bar">
+<div class="tabs" role="tablist">
+<button id="tab-map" role="tab" aria-selected="true" type="button">Interactive map</button>
+<button id="tab-png" role="tab" aria-selected="false" type="button">Hand-drawn picture</button>
+</div>
+<span id="filters" class="bar"></span>
+<button id="flows" type="button" aria-pressed="true">Flows</button>
+<input id="q" type="search" placeholder="Search nodes" aria-label="Search nodes">
+</div>
+
+<section id="view-map" class="stage">
+<div class="map" id="map">
+<svg id="svg" role="img" aria-label="Radial mind map of the NaraMotion ecosystem"><g id="vp"><g id="gx"></g><g id="ge"></g><g id="gn"></g></g></svg>
+<span class="hint">drag · scroll · click</span>
+<div class="zoombox"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">−</button><button id="zfit" type="button" aria-label="Fit map">⤢</button></div>
+</div>
+<aside class="detail" id="detail" aria-live="polite"></aside>
+</section>
+
+<section id="view-png" hidden>
+<div class="png" id="png"><img src="assets/img/rich_picture.png" alt="Hand-drawn rich picture of the NaraMotion ecosystem" width="4200" height="2800"></div>
+<p class="small" style="margin-top:8px">Tap the picture to switch between fit-to-width and full size (4200 × 2800 px).</p>
+</section>
+</div>
+
+<script>
+// kind: root | branch | actor | thing | concern | conflict
+const T = {id:"root",k:"root",n:"NaraMotion",d:"A low-cost platform that records, archives and teaches Indonesian traditional dance: a ten-node 9-DoF sensor suit, a browser platform (Studio, Kelas Tari, Arsip) and AI trained on open Balinese dance videos. Non-commercial, for cultural preservation.",c:[
+ {id:"trad",k:"branch",b:"trad",n:"Living tradition",d:"Dance knowledge lives in the bodies of masters and is passed on body to body in pura and sanggar.",c:[
+  {id:"maestro",k:"actor",n:"Maestro (Bali / Jawa)",d:"Master dancers who hold the movement vocabulary, style and feeling of each dance.",c:[
+   {id:"q-maestro",k:"concern",n:"A number can’t hold taksu",q:"“A number can’t hold taksu… but my movements must not vanish with me.”"}]},
+  {id:"teacher",k:"actor",n:"Sanggar teacher",d:"Teaches groups of students; corrections are given one by one.",c:[
+   {id:"q-teacher",k:"concern",n:"Can’t correct every wrist",q:"“Thirty students, one of me. I can’t correct every wrist.”"}]},
+  {id:"learners",k:"actor",n:"Young learners",d:"School and sanggar students who practise between lessons, often alone at home.",c:[
+   {id:"q-learn1",k:"concern",n:"Which joint is wrong?",q:"“Practising alone at home: which joint is wrong?”"},
+   {id:"q-learn2",k:"concern",n:"Will it run on my phone?",q:"“Will it run on my old phone?”"}]},
+  {id:"pura",k:"thing",n:"Pura, sanggar & gamelan",d:"The setting of transmission: temples, dance studios and live gamelan accompaniment."},
+  {id:"surface",k:"thing",n:"Video keeps only the surface",d:"Video archives keep the look of a dance, but joint angles, timing and finger shapes are not measurable from them."},
+  {id:"x-auth",k:"conflict",n:"Authenticity vs quantification",d:"Masters worry a score cannot capture rasa or taksu. NaraMotion presents scores as practice feedback against references from real dancers, not as a judgement of artistry."}]},
+ {id:"data",k:"branch",b:"data",n:"Open knowledge sources",d:"Public datasets and pretrained models, each used under its licence and credited by source.",c:[
+  {id:"ds",k:"thing",n:"Datasets",d:"Five datasets are used.",c:[
+   {id:"ds-f",k:"thing",n:"Woman Basic Balinese",d:"1,740 videos, 13 movements, 9 dancers, 3 cameras. CC BY 4.0. Used for recognition, references and 3D."},
+   {id:"ds-m",k:"thing",n:"Male Basic Balinese",d:"828 videos, 11 movements, 4 dancers. CC BY 4.0. Used for recognition, references and 3D."},
+   {id:"ds-aist",k:"thing",n:"AIST++",d:"411 sequences, 10 genres with SMPL motion. Annotations CC BY 4.0. Used to synthesise ten-node IMU signals and for Studio playback."},
+   {id:"ds-tr",k:"thing",n:"Turkish folk-dance IMU",d:"30 sessions, 3 dances, 5 real ESP32-C6 + MPU6050 nodes. CC BY 4.0. Used for sensor-based recognition."},
+   {id:"ds-jv",k:"thing",n:"Javanese VICON",d:"6 character types, 39 markers, 100 Hz. No licence, so it is used for internal analysis only and never redistributed."}]},
+  {id:"authors",k:"actor",n:"Dataset authors",d:"Researchers who released the data openly.",c:[
+   {id:"q-authors",k:"concern",n:"Just credit us",q:"“Just credit us.” Every source is listed in the Arsip credits."}]},
+  {id:"models",k:"thing",n:"Pose & 3D models",d:"RTMW via rtmlib (133 whole-body keypoints), MediaPipe Pose Landmarker (in the browser), SAM 3D Body by Meta (SAM License) and Motion2MixamoRig."},
+  {id:"body",k:"thing",n:"SMPL-X & MANO",d:"Body and hand models needed by Motion2MixamoRig. Non-commercial licences; files kept in a private dataset."},
+  {id:"q-lic",k:"concern",n:"Read every term",q:"“Gated weights, HF token, SAM licence… read every term!”"},
+  {id:"x-lic",k:"conflict",n:"Non-commercial terms vs funding",d:"Several models and datasets allow only non-commercial use. That fits NaraMotion today but limits how the project can be funded later."}]},
+ {id:"plat",k:"branch",b:"plat",n:"Platform & suit",d:"naramotion.web.app: a static web app. AI runs in the browser, so a learner’s video stays on the device.",c:[
+  {id:"studio",k:"thing",n:"Studio",d:"Replays 3D motion (AIST++ and Balinese movements reconstructed with fingers) and shows all ten sensor streams; records sessions."},
+  {id:"kelas",k:"thing",n:"Kelas Tari",d:"Camera AI names the movement, gives a 0–100 score and points to the joints to fix. Browser models: 98.0% (female set) and 88.5% (male set) test accuracy."},
+  {id:"arsip",k:"thing",n:"Arsip",d:"The 24 Balinese basic movements as reference cards and animated 3D characters, with every source credited."},
+  {id:"pipe",k:"thing",n:"AI pipeline",d:"MediaPipe 17 points → TCN in ONNX (3.65 MB female, 10.93 MB male ensemble) → DTW against 6 exemplars per movement → calibrated score."},
+  {id:"suit",k:"thing",n:"10-node GY-85 suit",d:"Head, torso, upper and lower arms, thighs, shins. ESP32-C3 + GY-85 (ADXL345, ITG-3205, HMC/QMC5883L), Madgwick fusion at 100 Hz, 26 kB/s for ten nodes.",c:[
+   {id:"q-suit",k:"concern",n:"Not built yet",q:"Designed and simulated, not yet built. Physical recordings are the next milestone."}]},
+  {id:"loop",k:"thing",n:"Learning loop",d:"Practise → record → score → correct, repeated at home between lessons."},
+  {id:"x-angle",k:"conflict",n:"2D score vs camera angle",d:"Scores from 2D keypoints depend on where the camera stands. The plan is to compare in 3D using SAM 3D Body references."}]},
+ {id:"comp",k:"branch",b:"comp",n:"Compute & infrastructure",d:"Free cloud GPUs for training once; Firebase and the learner’s own browser for everything else.",c:[
+  {id:"kaggle",k:"thing",n:"Kaggle T4 GPUs",d:"About 30 free GPU-hours a week, at most 2 batch sessions. Used for pose extraction (468,889 frames), TCN training and SAM 3D Body over 2,568 clips in 3 shards.",c:[
+   {id:"q-kaggle",k:"concern",n:"Session limit reached",q:"“Session limit reached… queue the next shard.”"}]},
+  {id:"firebase",k:"thing",n:"Firebase",d:"Hosting, Auth and Realtime Database (live sensor streams)."},
+  {id:"browsers",k:"thing",n:"Learners’ browsers",d:"WebAssembly with ONNX Runtime Web and MediaPipe; nothing to install."},
+  {id:"x-device",k:"conflict",n:"Heavy AI vs low-end devices",d:"Running pose estimation and a recogniser in the browser is demanding; headless tests measured about 4–5 fps, so older phones are a real constraint."}]},
+ {id:"soc",k:"branch",b:"soc",n:"Society & institutions",d:"The people and organisations around the project.",c:[
+  {id:"team",k:"actor",n:"Team SMANSA × ABBS",d:"SMANSA: Kim Arumi Malika Putri, Afra Na’ila Arkana, Anyaila Wahyu. ABBS: Khaifat Attallah Wibowo, Nabila Azalea, Khairan Athaya Wibowo.",c:[
+   {id:"q-team",k:"concern",n:"Be honest",q:"“Be honest: the suit is not validated yet; credit every source.”"}]},
+  {id:"schools",k:"actor",n:"Schools & sanggar classes",d:"Where the platform would be piloted.",c:[{id:"q-schools",k:"concern",n:"Pilot with real classes",q:"“Pilot it with real classes.”"}]},
+  {id:"agencies",k:"actor",n:"Cultural agencies & museums",d:"Institutions that hold archives and community relationships.",c:[{id:"q-agencies",k:"concern",n:"Who owns it?",q:"“Who owns a digitised movement?”"}]},
+  {id:"research",k:"actor",n:"Researchers",d:"Would use an open inertial dataset of Indonesian dance.",c:[{id:"q-research",k:"concern",n:"No open IMU data yet",q:"“There is no open IMU data for Indonesian dance yet.”"}]},
+  {id:"judges",k:"actor",n:"I2ASPO judges",d:"Assess the paper, deck and profile video.",c:[{id:"q-judges",k:"concern",n:"Impact or demo?",q:"“Real impact, or a demo?”"}]},
+  {id:"tourism",k:"actor",n:"Tourism & shows",d:"Commercial interest in dance as performance.",c:[{id:"q-tour",k:"concern",n:"Could we sell this?",q:"“Could we sell this?”"}]},
+  {id:"public",k:"actor",n:"Public & diaspora",d:"Viewers of the open Arsip."},
+  {id:"x-comm",k:"conflict",n:"Commodification vs preservation",d:"NaraMotion is non-commercial and focused on preservation; commercial use of the material would conflict with that aim and with several licences."}]}
+]};
+// cross-links: [from, to, label, style]
+const X = [
+ ["maestro","teacher","body-to-body transmission","gold"],["teacher","learners","imitation & correction","gold"],
+ ["ds-f","kaggle","videos → GPU pose extraction",""],["ds-m","kaggle","videos → GPU pose extraction",""],["models","kaggle","pretrained weights","purple"],
+ ["kaggle","pipe","ONNX models · exemplars",""],["kaggle","arsip","3D motion (.glb)",""],["firebase","studio","hosting · auth · live sensor DB",""],
+ ["pipe","browsers","runs on-device",""],["learners","kelas","camera / video (stays on device)",""],["kelas","learners","score 0–100 + joints to fix","gold"],
+ ["suit","studio","quaternions · 26 kB/s",""],["team","plat","build · train · document","gold"],["team","suit","assemble 10 nodes (next)","gold"],
+ ["agencies","arsip","permissions · partnerships","purple"],["studio","research","future open inertial dataset","purple"],["arsip","public","open archive, credited","gold"],
+ ["ds-aist","studio","synthetic IMU · playback",""],["x-auth","kelas","tension","purple"],["judges","team","paper · deck · video","purple"]
+];
+const KIND = {actor:"Stakeholder",thing:"System / artefact",concern:"Concern",conflict:"Conflict",branch:"Area",root:"Platform"};
+const BR = {trad:"--c-trad",data:"--c-data",plat:"--c-plat",comp:"--c-comp",soc:"--c-soc"};
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS = "http://www.w3.org/2000/svg", byId = {}, parent = {};
+(function idx(n,p,b){byId[n.id]=n;if(p)parent[n.id]=p;n.b=n.b||b;(n.c||[]).forEach(c=>idx(c,n.id,n.b));})(T,null,null);
+const folded = new Set(), hidden = new Set(); let showFlows = true, selected = "root", query = "";
+const vis = n => !hidden.has(n.k) || n.k==="root"||n.k==="branch";
+const kids = n => folded.has(n.id) ? [] : (n.c||[]).filter(vis);
+
+function layout(){
+  const R=[0,210,400,590], pos={}; let leaves=[];
+  (function walk(n,d){const k=kids(n); if(!k.length||d===3){leaves.push(n);} k.forEach(c=>walk(c,d+1));})(T,0);
+  const N=Math.max(leaves.length,1), step=2*Math.PI/N; leaves.forEach((l,i)=>l._a=i*step - Math.PI/2);
+  (function place(n,d){const k=kids(n); k.forEach(c=>place(c,d+1)); if(k.length) n._a=(k[0]._a+k[k.length-1]._a)/2;
+    const r=R[Math.min(d,3)]; pos[n.id]={x:r*Math.cos(n._a),y:r*Math.sin(n._a),d,a:n._a,leaf:!k.length};})(T,0);
+  pos.root={x:0,y:0,d:0,a:0,leaf:false}; return pos;
+}
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+let P={};
+function draw(){
+  P=layout(); const ge=document.getElementById("ge"), gn=document.getElementById("gn"), gx=document.getElementById("gx");
+  ge.innerHTML=gn.innerHTML=gx.innerHTML="";
+  const cc = n => n.k==="conflict"?css("--c-conf"):n.k==="concern"?css("--c-concern"):n.b?css(BR[n.b]):css("--accent");
+  (function edges(n){kids(n).forEach(c=>{const a=P[n.id],b=P[c.id];
+    const r1=Math.hypot(a.x,a.y), r2=Math.hypot(b.x,b.y), rm=(r1+r2)/2;
+    const d=n.id==="root"?`M0,0 L${b.x},${b.y}`:`M${a.x},${a.y} C${rm*Math.cos(n._a)},${rm*Math.sin(n._a)} ${rm*Math.cos(c._a)},${rm*Math.sin(c._a)} ${b.x},${b.y}`;
+    el("path",{d,class:"edge","data-a":n.id,"data-b":c.id,stroke:cc(c),...(c.k==="concern"?{"stroke-dasharray":"3 5"}:{})},ge); edges(c);});})(T);
+  if(showFlows) X.forEach(([f,t,l,s])=>{ if(!P[f]||!P[t]) return; const a=P[f],b=P[t];
+    const mx=(a.x+b.x)/2*0.45, my=(a.y+b.y)/2*0.45;
+    const p=el("path",{d:`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`,class:"xlink "+s,"data-a":f,"data-b":t,"marker-end":"url(#arr"+(s||"")+")"},gx);
+    el("title",{},p).textContent=`${byId[f].n} → ${byId[t].n}: ${l}`;});
+  Object.keys(P).forEach(id=>{const n=byId[id],p=P[id],col=cc(n);
+    const g=el("g",{class:"node",transform:`translate(${p.x},${p.y})`,tabindex:"0",role:"button","aria-label":`${KIND[n.k]}: ${n.n}`,"data-id":id},gn);
+    if(n.k==="root"){el("circle",{r:78,fill:css("--panel"),stroke:css("--accent"),"stroke-width":4},g);
+      const t=el("text",{"text-anchor":"middle","dominant-baseline":"middle",y:-8,style:`font-family:var(--display);font-size:30px;font-weight:700;fill:${css("--fg")}`},g);t.textContent="NaraMotion";
+      const s=el("text",{"text-anchor":"middle",y:22,class:"lbl",style:"font-size:12px;fill:var(--muted)"},g);s.textContent="naramotion.web.app";}
+    else if(n.k==="branch"){const w=n.n.length*8.6+36;
+      el("rect",{x:-w/2,y:-22,width:w,height:44,rx:22,fill:col},g);
+      const t=el("text",{"text-anchor":"middle","dominant-baseline":"middle",style:`font-size:15.5px;font-weight:700;fill:${css("--bg")}`},g);t.textContent=n.n+(folded.has(id)?"  +":"");}
+    else {
+      const sz=n.k==="actor"?9:n.k==="conflict"?10:7;
+      if(n.k==="conflict"){el("path",{d:`M${-sz},${-sz} L${sz},${sz} M${sz},${-sz} L${-sz},${sz}`,stroke:col,"stroke-width":4,"stroke-linecap":"round"},g);el("circle",{r:sz+6,fill:"transparent"},g);}
+      else if(n.k==="concern") el("circle",{r:sz,fill:css("--panel"),stroke:col,"stroke-width":2.5},g);
+      else el(n.k==="actor"?"circle":"rect",n.k==="actor"?{r:sz,fill:col}:{x:-sz,y:-sz,width:2*sz,height:2*sz,rx:2,fill:col},g);
+      if(n.c&&n.c.length&&folded.has(id)) el("circle",{r:sz+5,fill:"none",stroke:col,"stroke-width":2},g);
+      const left=Math.cos(p.a)<-0.01, deg=p.a*180/Math.PI+(left?180:0);
+      const lbl=el("text",{class:"lbl"+(p.leaf?" leaf":"")+(n.k==="concern"?" concern":"")+(n.k==="conflict"?" conflict":""),
+        "dominant-baseline":"middle","text-anchor":left?"end":"start",transform:`rotate(${deg}) translate(${left?-(sz+8):sz+8},0)`},g);
+      lbl.textContent=n.n;
+      const bb=lbl.getBBox(); const bg=el("rect",{x:bb.x-3,y:bb.y-1,width:bb.width+6,height:bb.height+2,rx:4,fill:css("--panel"),opacity:.85,transform:lbl.getAttribute("transform")});g.insertBefore(bg,lbl);
+    }
+    g.addEventListener("click",e=>{e.stopPropagation();if(moved)return;select(id);});
+    g.addEventListener("dblclick",e=>{e.stopPropagation();toggle(id);});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(id);} if(e.key==="f"){toggle(id);}});
+    g.addEventListener("mouseenter",()=>focusOn(id)); g.addEventListener("mouseleave",()=>focusOn(selected));
+  });
+  applySearch(); focusOn(selected);
+}
+function toggle(id){const n=byId[id]; if(!n.c||id==="root")return; folded.has(id)?folded.delete(id):folded.add(id); draw(); select(id);}
+function related(id){const s=new Set([id]); let p=parent[id]; while(p){s.add(p);p=parent[p];}
+  (function down(n){(n.c||[]).forEach(c=>{s.add(c.id);down(c);});})(byId[id]);
+  if(showFlows) X.forEach(([f,t])=>{if(f===id)s.add(t);if(t===id)s.add(f);}); return s;}
+function focusOn(id){ const all=id==="root"; const s=related(id);
+  document.querySelectorAll(".node").forEach(g=>g.classList.toggle("dim",!all&&!s.has(g.dataset.id)));
+  document.querySelectorAll(".edge").forEach(e=>{const on=all||(s.has(e.dataset.a)&&s.has(e.dataset.b));e.classList.toggle("dim",!on);});
+  document.querySelectorAll(".xlink").forEach(e=>{const on=all||e.dataset.a===id||e.dataset.b===id;e.classList.toggle("dim",!on);});
+  if(query) applySearch();
+}
+function applySearch(){ if(!query) return; const q=query.toLowerCase();
+  document.querySelectorAll(".node").forEach(g=>{const n=byId[g.dataset.id];const hit=(n.n+" "+(n.d||"")+" "+(n.q||"")).toLowerCase().includes(q);g.classList.toggle("dim",!hit&&n.k!=="root");});}
+function select(id){ selected=id; const n=byId[id], box=document.getElementById("detail");
+  const col = n.k==="conflict"?"var(--c-conf)":n.k==="concern"?"var(--c-concern)":n.b?`var(${BR[n.b]})`:"var(--accent)";
+  const path=[]; let p=parent[id]; while(p){path.unshift(byId[p].n);p=parent[p];}
+  const fl = X.filter(([f,t])=>f===id||t===id);
+  box.innerHTML=`<span class="kind" style="color:${col}">${KIND[n.k]}${path.length?" · "+path.slice(1).join(" › "):""}</span>
+   <h2>${n.n}</h2>${n.q?`<p class="quote">${n.q}</p>`:""}${n.d?`<p>${n.d}</p>`:""}
+   ${fl.length?`<span class="kind" style="color:var(--flow)">Flows</span><div class="links">${fl.map(([f,t,l])=>`<button type="button" data-go="${f===id?t:f}">${f===id?"→ "+byId[t].n:"← "+byId[f].n}<br><span class="small">${l}</span></button>`).join("")}</div>`:""}
+   ${n.c&&n.c.length?`<span class="kind" style="color:var(--muted)">Inside (${n.c.length})</span><div class="links">${n.c.map(c=>`<button type="button" data-go="${c.id}">${c.n}</button>`).join("")}</div>`:""}
+   ${n.c&&n.c.length&&id!=="root"?`<button type="button" id="fold">${folded.has(id)?"Unfold this branch":"Fold this branch"}</button>`:""}
+   ${id!=="root"?`<button type="button" data-go="root">Show the whole map</button>`:""}`;
+  box.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const g=b.dataset.go; let q=parent[g]; while(q){if(folded.has(q)){folded.delete(q);draw();} q=parent[q];} select(g); if(g!=="root") centerOn(g);}));
+  const f=box.querySelector("#fold"); if(f) f.addEventListener("click",()=>toggle(id));
+  focusOn(id);
+}
+// pan / zoom
+const svg=document.getElementById("svg"), vp=document.getElementById("vp"); let V={x:0,y:0,k:1}, moved=false;
+function apply(){vp.setAttribute("transform",`translate(${V.x},${V.y}) scale(${V.k})`);}
+function fit(){const r=svg.getBoundingClientRect(), b=vp.getBBox(); const k=Math.min(r.width/(b.width+60), r.height/(b.height+60));
+  V.k=k; V.x=r.width/2-(b.x+b.width/2)*k; V.y=r.height/2-(b.y+b.height/2)*k; apply();}
+function zoomAt(f,cx,cy){const k=Math.max(.2,Math.min(4,V.k*f)); V.x=cx-(cx-V.x)*k/V.k; V.y=cy-(cy-V.y)*k/V.k; V.k=k; apply();}
+function centerOn(id){const r=svg.getBoundingClientRect(),p=P[id]; if(!p)return; V.k=Math.max(V.k,1); V.x=r.width/2-p.x*V.k; V.y=r.height/2-p.y*V.k; apply();}
+svg.addEventListener("wheel",e=>{e.preventDefault();const r=svg.getBoundingClientRect();zoomAt(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top);},{passive:false});
+const ptrs=new Map(); let last=null, pinch=null;
+svg.addEventListener("pointerdown",e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;last={x:e.clientX,y:e.clientY};svg.classList.add("drag");});
+svg.addEventListener("pointermove",e=>{if(!ptrs.has(e.pointerId))return; ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);const r=svg.getBoundingClientRect();
+    if(pinch)zoomAt(d/pinch,(a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top); pinch=d; moved=true; return;}
+  const dx=e.clientX-last.x, dy=e.clientY-last.y; if(Math.abs(dx)+Math.abs(dy)>3){moved=true; if(!svg.hasPointerCapture(e.pointerId)) svg.setPointerCapture(e.pointerId);} V.x+=dx; V.y+=dy; last={x:e.clientX,y:e.clientY}; apply();});
+const up=e=>{ptrs.delete(e.pointerId); if(ptrs.size<2)pinch=null; svg.classList.remove("drag"); setTimeout(()=>moved=false,0);};
+svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
+svg.addEventListener("click",()=>{if(!moved) select("root");});
+document.getElementById("zin").onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1.25,r.width/2,r.height/2);};
+document.getElementById("zout").onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(0.8,r.width/2,r.height/2);};
+document.getElementById("zfit").onclick=fit;
+// markers
+const defs=el("defs",{},svg); [["",""],["gold","--c-plat"],["purple","--c-soc"]].forEach(([s,v])=>{const m=el("marker",{id:"arr"+s,viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);el("path",{d:"M0,0 L10,5 L0,10 z",fill:css(v||"--flow")},m);});
+// filters
+const fbox=document.getElementById("filters");
+[["actor","Stakeholders","--c-soc"],["thing","Systems","--c-plat"],["concern","Concerns","--c-concern"],["conflict","Conflicts","--c-conf"]].forEach(([k,l,c])=>{
+  const b=document.createElement("button");b.type="button";b.className="chip";b.setAttribute("aria-pressed","true");b.innerHTML=`<span class="dot" style="background:var(${c})"></span>${l}`;
+  b.onclick=()=>{hidden.has(k)?hidden.delete(k):hidden.add(k);b.setAttribute("aria-pressed",!hidden.has(k));draw();};fbox.appendChild(b);});
+document.getElementById("flows").onclick=e=>{showFlows=!showFlows;e.currentTarget.setAttribute("aria-pressed",showFlows);draw();};
+document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim();if(!query)focusOn(selected);else applySearch();});
+// tabs
+const tm=document.getElementById("tab-map"),tp=document.getElementById("tab-png");
+tm.onclick=()=>{tm.setAttribute("aria-selected","true");tp.setAttribute("aria-selected","false");document.getElementById("view-map").hidden=false;document.getElementById("view-png").hidden=true;};
+tp.onclick=()=>{tp.setAttribute("aria-selected","true");tm.setAttribute("aria-selected","false");document.getElementById("view-map").hidden=true;document.getElementById("view-png").hidden=false;};
+const png=document.getElementById("png"); png.querySelector("img").onclick=()=>png.classList.toggle("full");
+// theme change → redraw colours
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>draw());
+new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+draw(); select("root"); requestAnimationFrame(fit); window.addEventListener("resize",fit);
+document.fonts && document.fonts.ready.then(()=>{draw();fit();});
+</script>
+
+</body>
+</html>
