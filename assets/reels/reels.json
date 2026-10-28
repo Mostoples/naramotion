@@ -1,0 +1,252 @@
+[
+{
+"id": "gambyong",
+"file": "gambyong",
+"title": "Gambyong",
+"region": "Surakarta, Jawa Tengah",
+"kind": "anim",
+"note": "Animasi penari NaraMotion (bukan rekaman penari).",
+"ds": null,
+"move": null
+},
+{
+"id": "putri__Agem_Kanan",
+"file": "putri__Agem_Kanan",
+"title": "Agem Kanan",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Agem Kanan 66 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Agem Kanan"
+},
+{
+"id": "putri__Agem_Kiri",
+"file": "putri__Agem_Kiri",
+"title": "Agem Kiri",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Agem Kiri 71 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Agem Kiri"
+},
+{
+"id": "putri__Ngeed",
+"file": "putri__Ngeed",
+"title": "Ngeed",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ngeed 136 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ngeed"
+},
+{
+"id": "putri__Ngegol",
+"file": "putri__Ngegol",
+"title": "Ngegol",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ngegol 73 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ngegol"
+},
+{
+"id": "putri__Ngelo",
+"file": "putri__Ngelo",
+"title": "Ngelo",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ngelo 139 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ngelo"
+},
+{
+"id": "putri__Ngelung",
+"file": "putri__Ngelung",
+"title": "Ngelung",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ngelung 139 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ngelung"
+},
+{
+"id": "putri__Ngeseh",
+"file": "putri__Ngeseh",
+"title": "Ngeseh",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ngeseh 137 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ngeseh"
+},
+{
+"id": "putri__Ngumbang",
+"file": "putri__Ngumbang",
+"title": "Ngumbang",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ngumbang 129 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ngumbang"
+},
+{
+"id": "putri__Nyalud",
+"file": "putri__Nyalud",
+"title": "Nyalud",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Nyalud 101 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Nyalud"
+},
+{
+"id": "putri__Nyeregseg",
+"file": "putri__Nyeregseg",
+"title": "Nyeregseg",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Nyeregseg 75 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Nyeregseg"
+},
+{
+"id": "putri__Seledet",
+"file": "putri__Seledet",
+"title": "Seledet",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Seledet 100 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Seledet"
+},
+{
+"id": "putri__Tapak_Sirangpada",
+"file": "putri__Tapak_Sirangpada",
+"title": "Tapak Sirangpada",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Tapak Sirangpada 101 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Tapak Sirangpada"
+},
+{
+"id": "putri__Ulap_Ulap",
+"file": "putri__Ulap_Ulap",
+"title": "Ulap-Ulap",
+"region": "Bali · gerak dasar putri",
+"kind": "video",
+"note": "Klip Ulap Ulap 69 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putri",
+"move": "Ulap-Ulap"
+},
+{
+"id": "putra__Agem_Kanan",
+"file": "putra__Agem_Kanan",
+"title": "Agem Kanan",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Agem Kanan 02 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Agem Kanan"
+},
+{
+"id": "putra__Agem_Kiri",
+"file": "putra__Agem_Kiri",
+"title": "Agem Kiri",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Agem Kiri 40 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Agem Kiri"
+},
+{
+"id": "putra__Gandang_Gandang",
+"file": "putra__Gandang_Gandang",
+"title": "Gandang-Gandang",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Gandang Gandang 01 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Gandang-Gandang"
+},
+{
+"id": "putra__Malpal",
+"file": "putra__Malpal",
+"title": "Malpal",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Malpal 39 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Malpal"
+},
+{
+"id": "putra__Nayog",
+"file": "putra__Nayog",
+"title": "Nayog",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Nayog 43 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Nayog"
+},
+{
+"id": "putra__Nepuk_Kampuh",
+"file": "putra__Nepuk_Kampuh",
+"title": "Nepuk Kampuh",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Nepuk Kampuh 01 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Nepuk Kampuh"
+},
+{
+"id": "putra__Oyod",
+"file": "putra__Oyod",
+"title": "Oyod",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Oyod 36 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Oyod"
+},
+{
+"id": "putra__Piles",
+"file": "putra__Piles",
+"title": "Piles",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Piles 18 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Piles"
+},
+{
+"id": "putra__Seledet",
+"file": "putra__Seledet",
+"title": "Seledet",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Seledet 42 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Seledet"
+},
+{
+"id": "putra__Tapak_Sirang_Pada",
+"file": "putra__Tapak_Sirang_Pada",
+"title": "Tapak Sirang Pada",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Tapak Sirang Pada 41 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Tapak Sirang Pada"
+},
+{
+"id": "putra__Ulap_Ulap",
+"file": "putra__Ulap_Ulap",
+"title": "Ulap-Ulap",
+"region": "Bali · gerak dasar putra",
+"kind": "video",
+"note": "Klip Ulap Ulap 40 · Hendrawan dkk., Mendeley Data, CC BY 4.0.",
+"ds": "putra",
+"move": "Ulap-Ulap"
+}
+]

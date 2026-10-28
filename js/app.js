@@ -12,7 +12,7 @@
 
   const PAL = {
     bone: tok('--gold'), boneHi: tok('--gold-bright'), glow: tok('--gold'), ghost: tok('--ghost'),
-    ring: tok('--gold-deep'), text: tok('--muted'), node: tok('--gold-bright'), ink: tok('--ink'), sampur: tok('--sogan'),
+    ring: tok('--gold-deep'), text: tok('--muted'), node: tok('--gold-bright'), ink: tok('--ink'), sampur: tok('--sogan'), ok: tok('--ok'),
   };
   const danceById = Object.fromEntries(M.DANCES.map((d) => [d.id, d]));
 
@@ -49,7 +49,7 @@
       'auth/configuration-not-found': 'Metode login belum diaktifkan di Firebase Console.',
       'auth/popup-closed-by-user': 'Jendela login Google ditutup sebelum selesai.',
       'auth/cancelled-popup-request': 'Jendela login Google ditutup sebelum selesai.',
-      'auth/popup-blocked': 'Popup diblokir peramban. Izinkan popup untuk situs ini lalu coba lagi.',
+      'auth/popup-blocked': 'Jendela pop-up diblokir peramban. Izinkan pop-up untuk situs ini, lalu coba lagi.',
       'auth/unauthorized-domain': 'Domain ini belum diizinkan di pengaturan Firebase Authentication.',
       'auth/too-many-requests': 'Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.',
       'auth/network-request-failed': 'Koneksi gagal. Periksa internet lalu coba lagi.',
@@ -710,6 +710,9 @@
         .catch(() => { $('#anim-cap').textContent = 'Animasi 3D belum bisa dimuat. Muat ulang halaman untuk mencoba lagi.'; });
     })();
 
+    // dari feed video contoh (js/landing.js): langsung latihan gerak itu di Kamera AI
+    window.addEventListener('nara:practice', (e) => { location.hash = 'kelas'; Kelas.openCam(e.detail.ds, e.detail.move); });
+
     $('#landing-dances').innerHTML = M.DANCES.map((d) => `
       <article><h3>${esc(d.name)}</h3><p class="region">${esc(d.region)}</p><p>${esc(d.character)}. ${esc(d.motifs.slice(0, 3).join(', '))}.</p></article>`).join('');
 
@@ -736,7 +739,7 @@
           const json = JSON.stringify({ format: 'naramotion-quat-v1', nodes: M.NODES.map((n) => n.id), order: 'w,x,y,z', session: s, frames });
           await navigator.clipboard.writeText(json);
           toast(`Data ${frames.length} frame tersalin ke clipboard.`);
-        } catch (err) { toast('Gagal menyalin data. Periksa koneksi lalu coba lagi.'); }
+        } catch (err) { toast('Gagal menyalin data. Izinkan akses papan klip, lalu coba lagi.'); }
       } else if (d) {
         const id = d.dataset.del;
         if (!armed.has(id)) { armed.add(id); render(); setTimeout(() => { armed.delete(id); render(); }, 4000); return; }

@@ -17,7 +17,14 @@
       "ml/**",
       "media/**",
       "print/**",
-      "PROMPT_SESI_BARU.md"
+      "PROMPT_SESI_BARU.md",
+      ".git/**",
+      "**/.git/**",
+      ".gitignore",
+      "README.md",
+      "paper/**",
+      "**/*.py",
+      "**/*.sh"
     ],
     "headers": [
       {

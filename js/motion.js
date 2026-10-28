@@ -32,7 +32,7 @@
       about: 'Tari penyambutan dari Bali dengan posisi tangan agem yang tinggi, tatapan seledet yang tajam, dan getaran jari yang cepat.',
       motifs: ['Agem kanan', 'Agem kiri', 'Seledet', 'Nyeregseg'],
       p: { tempo: 0.42, armBase: 1.2, armRange: 0.3, flex: 0.25, elbow: 1.5, ukel: 2.0, sway: 0.07, bend: 0.1, twist: 0.22, knee: 0.5, lift: 0.2, stamp: 0, head: 0.35, asym: 1.4 } },
-    { id: 'jaipong', name: 'Jaipongan', region: 'Karawang & Bandung, Jawa Barat', character: 'Dinamis dan enerjik',
+    { id: 'jaipong', name: 'Jaipongan', region: 'Karawang & Bandung, Jawa Barat', character: 'Dinamis dan energik',
       about: 'Tari kreasi Sunda yang lahir pada akhir 1970-an. Geraknya cepat, dengan patahan bahu dan pinggul yang tegas mengikuti kendang.',
       motifs: ['Bukaan', 'Pencugan', 'Ngala', 'Mincid'],
       p: { tempo: 0.62, armBase: 0.7, armRange: 0.8, flex: 0.6, elbow: 1.3, ukel: 1.8, sway: 0.11, bend: 0.18, twist: 0.32, knee: 0.34, lift: 0.45, stamp: 0.4, head: 0.3, asym: 1.8 } },
