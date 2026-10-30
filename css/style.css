@@ -2,22 +2,22 @@
    emas keraton sebagai aksen matte. Mobile-first: satu kolom di ponsel, bar navigasi bawah
    untuk ruang kerja, target sentuh minimal 44 px. Satu tema gelap yang disengaja. */
 :root {
-  --ink: #1d120a;            /* permukaan dasar sogan gelap (juga warna isi node di kanvas) */
-  --ink-2: #170e07;          /* sumur tenggelam */
-  --surface: #24160c;
+  --ink: #120b07;            /* hitam hangat seperti latar logo (juga warna isi node di kanvas) */
+  --ink-2: #0c0704;          /* sumur tenggelam */
+  --surface: #1b110b;
   --hi: rgba(255, 216, 150, .055);
   --lo: rgba(0, 0, 0, .62);
   --raise: 7px 7px 16px var(--lo), -6px -6px 14px var(--hi);
   --raise-sm: 4px 4px 9px var(--lo), -3px -3px 8px var(--hi);
   --inset: inset 5px 5px 11px var(--lo), inset -4px -4px 10px var(--hi);
   --inset-sm: inset 3px 3px 6px var(--lo), inset -2px -2px 5px var(--hi);
-  --line: rgba(217, 164, 65, .16);
+  --line: rgba(212, 163, 96, .16);
 
-  --gold: #d9a441;           /* emas logo */
-  --gold-bright: #f0c96b;
-  --gold-pale: #f6de9a;
-  --gold-deep: #a9772a;
-  --sogan: #c0472e;          /* merah sampur pada logo */
+  --gold: #c08a4c;           /* emas logo */
+  --gold-bright: #dcaa66;
+  --gold-pale: #f0d3a2;
+  --gold-deep: #8c6232;
+  --sogan: #8e1b22;          /* merah marun pada logo (#58010a digelapkan untuk aksen) */
   --cream: #ebe0c6;
   --muted: #a9987a;
   --dim: #76674c;
@@ -116,7 +116,7 @@ p { max-width: 66ch; }
 }
 .topbar-in { display: flex; align-items: center; gap: 12px; min-height: 62px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--gold); min-width: 0; }
-.brand-mark { width: 30px; height: 35px; flex: none; }
+.brand-mark { width: 40px; height: 39px; flex: none; object-fit: contain; }
 .brand-name { font: 700 1.12rem/1 var(--f-display); letter-spacing: .08em; color: var(--gold-bright); margin: 0; }
 .top-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; min-width: 0; }
 .top-actions .btn { min-height: 40px; }
@@ -639,7 +639,8 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .intro-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .intro-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13, 8, 4, .25) 0%, rgba(13, 8, 4, .15) 40%, rgba(29, 18, 10, .92) 88%, var(--ink) 100%); }
 .intro-in { position: relative; display: grid; justify-items: center; text-align: center; gap: 8px; padding-block: 48px 28px; }
-.intro-logo { width: 84px; height: auto; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, .6)); }
+.intro-title { margin: 0; line-height: 0; padding: 18px 36px 10px; border-radius: 50%; background: radial-gradient(closest-side, rgba(10, 6, 3, .88) 55%, rgba(10, 6, 3, .55) 78%, transparent); }
+.intro-logo { width: min(60vw, 300px); height: auto; filter: drop-shadow(0 6px 22px rgba(0, 0, 0, .75)); }
 .intro-name { margin: 0; font: 800 clamp(2.4rem, 9vw, 4.8rem)/1 var(--f-display); letter-spacing: .04em; color: var(--gold-bright); text-shadow: 0 4px 24px rgba(0, 0, 0, .7); }
 .intro-tag { margin: 0; max-width: 44ch; font-size: 1.08rem; color: var(--cream); text-shadow: 0 2px 12px rgba(0, 0, 0, .8); }
 .intro .hero-cta { margin: 1rem 0 .4rem; }
@@ -657,7 +658,7 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .batik-kawung::before { background-image: url("../assets/batik/kawung.svg"); background-size: 240px; }
 .batik-truntum::before { background-image: url("../assets/batik/truntum.svg"); background-size: 260px; opacity: .09; }
 .batik-megamendung::before { background-image: url("../assets/batik/megamendung.svg"); background-size: 900px auto; background-position: bottom; background-repeat: repeat-x; opacity: .12; }
-body { background-image: radial-gradient(ellipse at 50% 0%, rgba(192, 71, 46, .07), transparent 60%); }
+body { background-image: radial-gradient(ellipse at 50% 0%, rgba(142, 27, 34, .12), transparent 60%); }
 
 /* ---------- Feed video contoh tari (gaya Reels) ---------- */
 .reels-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; }
@@ -688,7 +689,7 @@ body.no-scroll { overflow: hidden; }
 /* ---------- Galeri sejarah ---------- */
 .hist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 16px; margin-top: 1.4rem; }
 .hist-card { display: grid; gap: 6px; text-align: left; padding: 20px; border: 0; cursor: pointer; color: inherit; font: inherit; align-content: start; }
-.hist-card.is-first { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(192, 71, 46, .18), var(--surface) 60%); }
+.hist-card.is-first { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(142, 27, 34, .3), var(--surface) 60%); }
 .hist-type { font: 500 .66rem var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 .hist-name { font: 700 1.3rem/1.15 var(--f-display); color: var(--gold-bright); }
 .hist-card.is-first .hist-name { font-size: 1.8rem; }
