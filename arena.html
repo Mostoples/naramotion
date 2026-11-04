@@ -54,7 +54,11 @@ select{width:100%;font:15px Spectral,serif;color:var(--cream);background:rgba(0,
     <button type="button" class="btn line" id="speed">Kecepatan 1×</button>
   </div>
   <p class="info" id="desc"></p>
+  <div><p class="lbl">Iringan gamelan</p><div class="chips" id="music"></div>
+    <div class="row" style="margin-top:6px"><button type="button" class="btn" id="mplay">Putar musik</button><label class="info"><input type="checkbox" id="crowd" checked> Penonton</label></div></div>
   <p class="credit" id="credit"></p>
+  <p class="credit" id="mcredit"></p>
+  <audio id="audio" loop preload="none"></audio>
 </aside>
 <script type="module">
 import * as THREE from 'three';
@@ -67,18 +71,19 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 const $ = (s) => document.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Arena: model Sketchfab (CC BY 4.0) + suasana cahaya. size = ukuran horizontal terbesar (m), spot = posisi penari relatif kotak model.
 const ARENAS = [
-  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 40, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.9, fill: 40, props: ['gamelan'],
+  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 64, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.9, fill: 40, props: ['gamelan'],
     desc: 'Pendapa rumah joglo Jawa: tempat tari keraton dan sanggar dipentaskan. Cahaya sore masuk dari sisi pendapa.',
     credit: '“Rumah Joglo Jawa” oleh mokhammadsoni', url: 'https://sketchfab.com/3d-models/rumah-joglo-jawa-285d403781454614b04e97b64454ff73' },
-  { id: 'borobudur', name: 'Stupa Borobudur', file: 'assets/arena/borobudur.glb', size: 8.6, spot: 'front', gap: 2.2, cam: [2.4, 1.5, 5.6], sun: [16, 100], turbidity: 8, exposure: 0.75,
+  { id: 'borobudur', name: 'Stupa Borobudur', file: 'assets/arena/borobudur.glb', size: 11, spot: 'front', gap: 3.2, cam: [2.6, 1.6, 7], sun: [16, 100], turbidity: 8, exposure: 0.75,
     desc: 'Teras stupa berterawang Candi Borobudur, Magelang, saat matahari pagi.',
     credit: '“Borobudur temple” oleh giga', url: 'https://sketchfab.com/3d-models/borobudur-temple-84525b2dc4094057ab33e026eb961371' },
-  { id: 'trowulan', name: 'Gerbang Trowulan', file: 'assets/arena/trowulan.glb', size: 16, spot: 'front', gap: 3, cam: [2.6, 1.6, 6.5], sun: [38, 25], turbidity: 3, exposure: 0.6, ground: 0x7a5a44,
+  { id: 'trowulan', name: 'Gerbang Trowulan', file: 'assets/arena/trowulan.glb', size: 24, spot: 'front', gap: 5, cam: [2.8, 1.7, 8], sun: [38, 25], turbidity: 3, exposure: 0.6, ground: 0x7a5a44,
     desc: 'Gerbang bata merah gaya Majapahit di Trowulan, Jawa Timur.',
     credit: '“Gerbang Trowulan Majapahit” oleh aan.javanese32', url: 'https://sketchfab.com/3d-models/gerbang-trowulan-majapahit-kotaraja-gates-98393d8a51d84c0f912f2b2e99a32aed' },
   { id: 'panggung', name: 'Panggung Emas', file: null, props: ['gamelan'], exposure: 1.0,
@@ -156,7 +161,8 @@ function floorAt(root, x, z, fromY) {
   const hit = ray.intersectObject(root, true).find((h) => h.face && h.face.normal && h.object.material && !h.object.material.transparent);
   return hit ? hit.point.y : null;
 }
-async function showArena(a) {
+let a_cur = null;
+async function showArena(a) { a_cur = a;
   $('#load').hidden = false; $('#load').textContent = `Memuat ${a.name}…`;
   if (arenaObj) scene.remove(arenaObj); scene.remove(stage, sky, plaza); propObjs.forEach((p) => scene.remove(p)); propObjs = [];
   renderer.toneMappingExposure = a.exposure;
@@ -192,6 +198,7 @@ async function showArena(a) {
     scene.add(g); propObjs.push(g);
   }
   if (dancer) dancer.position.copy(dancerSpot);
+  placeCrowd();
   // di ponsel panel menutupi separuh bawah layar: bidik lebih rendah agar penari tampil di separuh atas
   controls.target.copy(dancerSpot).add(new THREE.Vector3(0, innerWidth < 900 ? 0.15 : 1.0, 0));
   camera.position.copy(clearCamera(a));
@@ -241,8 +248,53 @@ async function showMove(m) {
   dancer.traverse((o) => { if (o.isMesh && !o.isSkinnedMesh) o.visible = false; });   // sembunyikan objek bantu non-karakter
   scene.add(dancer); applyLook();
   mixer = new THREE.AnimationMixer(dancer); action = mixer.clipAction(gl.animations[0]); action.play(); mixer.timeScale = playing ? speed : 0;
+  if (MUSIC && !userPickedMusic) setMusic(m.ds === 'putra' ? 'bali_gender' : 'bali_joged', false);
   $('#load').hidden = true;
 }
+
+// ---------- penonton: salinan rig dalam pose diam, pakaian warna-warni, duduk/berdiri melingkar di sisi penari ----------
+const crowd = new THREE.Group(); let crowdOn = true;
+const CLOTH = [0x7a2e22, 0x2e4a6b, 0x5b3a1e, 0x3f5e3a, 0x8c6a2c, 0x4a2a4f, 0x6b2b2b, 0x2f2f2f, 0x9a7b4f, 0x24423f];
+async function buildCrowd() {
+  const src = await load('assets/ml/rig/putri__Seledet.glb');   // gerak Seledet: berdiri tegak → pose penonton
+  for (let i = 0; i < 34; i++) {
+    const c = SkeletonUtils.clone(src.scene); c.traverse((o) => { if (o.isMesh && !o.isSkinnedMesh) o.visible = false;
+      if (o.isSkinnedMesh) { o.material = new THREE.MeshStandardMaterial({ color: CLOTH[i % CLOTH.length], roughness: 0.85 }); o.castShadow = true; o.frustumCulled = false; } });
+    const mx = new THREE.AnimationMixer(c), act = mx.clipAction(src.animations[0]); act.play(); mx.setTime(Math.random() * 3);   // pose diam berbeda-beda
+    c.scale.setScalar(0.92 + Math.random() * 0.14); crowd.add(c);
+  }
+  placeCrowd(); scene.add(crowd);
+}
+function placeCrowd() {
+  if (!crowd.children.length) return;
+  // dua baris setengah lingkaran di depan-samping penari (sisi kamera dibiarkan terbuka)
+  crowd.children.forEach((c, i) => {
+    const row = i < 18 ? 0 : 1, n = row ? 16 : 18, k = row ? i - 18 : i, r = (row ? 7.6 : 6.2) * (a_cur && a_cur.crowdR || 1);
+    const ang = Math.PI * (0.62 + 0.76 * (k + 0.5) / n) + (row ? 0.04 : 0);   // dari kiri-depan ke kanan-depan, melewati belakang
+    c.position.set(dancerSpot.x + Math.sin(ang) * r, dancerSpot.y, dancerSpot.z + Math.cos(ang) * r);
+    c.lookAt(dancerSpot.x, c.position.y, dancerSpot.z);
+  });
+  crowd.visible = crowdOn;
+}
+
+// ---------- iringan gamelan (rekaman Wikimedia Commons berlisensi terbuka) ----------
+let MUSIC = null, userPickedMusic = false; const audio = $('#audio');
+async function initMusic() {
+  MUSIC = await (await fetch('assets/music/music.json')).json();
+  const names = { bali_joged: 'Bali · Joged', bali_gender: 'Bali · Gender Wayang', jawa_gambyong: 'Jawa · Gambyong', jawa_ketawang: 'Jawa · Ketawang' };
+  $('#music').innerHTML = Object.keys(MUSIC).map((k) => `<button type="button" class="chip" data-music="${k}" aria-pressed="false">${names[k] || k}</button>`).join('');
+  $('#music').addEventListener('click', (e) => { const b = e.target.closest('[data-music]'); if (b) { userPickedMusic = true; setMusic(b.dataset.music, true); } });
+  const m = moves[+sel.value]; setMusic(m && m.ds === 'putra' ? 'bali_gender' : 'bali_joged', false);
+}
+function setMusic(k, play) {
+  const M = MUSIC[k]; if (!M) return;
+  $('#music').querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.music === k)));
+  const was = !audio.paused; if (!audio.src.endsWith(M.file)) { audio.src = M.file; }
+  $('#mcredit').innerHTML = `Iringan: <a href="${M.url}" target="_blank" rel="noopener">${M.title}</a> · ${M.author || 'Wikimedia Commons'} · ${M.license}.`;
+  if (play || was) audio.play().then(() => { $('#mplay').textContent = 'Jeda musik'; }).catch(() => {});
+}
+$('#mplay').addEventListener('click', () => { if (audio.paused) audio.play().then(() => { $('#mplay').textContent = 'Jeda musik'; }).catch(() => {}); else { audio.pause(); $('#mplay').textContent = 'Putar musik'; } });
+$('#crowd').addEventListener('change', (e) => { crowdOn = e.target.checked; crowd.visible = crowdOn; });
 
 // ---------- UI ----------
 const arenaBox = $('#arenas'), lookBox = $('#looks'), sel = $('#move');
@@ -250,7 +302,8 @@ arenaBox.innerHTML = ARENAS.map((a, i) => `<button type="button" class="chip" da
 lookBox.innerHTML = LOOKS.map((l, i) => `<button type="button" class="chip" data-look="${l.id}" aria-pressed="${i === 0}">${l.name}</button>`).join('');
 arenaBox.addEventListener('click', (e) => { const b = e.target.closest('[data-arena]'); if (!b) return; arenaBox.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); showArena(ARENAS.find((a) => a.id === b.dataset.arena)).catch(fail); });
 lookBox.addEventListener('click', (e) => { const b = e.target.closest('[data-look]'); if (!b) return; lookBox.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); look = b.dataset.look; applyLook(); });
-$('#play').addEventListener('click', (e) => { playing = !playing; if (mixer) mixer.timeScale = playing ? speed : 0; e.currentTarget.textContent = playing ? 'Jeda' : 'Putar'; });
+$('#play').addEventListener('click', (e) => { playing = !playing; if (mixer) mixer.timeScale = playing ? speed : 0; e.currentTarget.textContent = playing ? 'Jeda' : 'Putar';
+  if (!playing) audio.pause(); });
 $('#orbit').addEventListener('click', (e) => { controls.autoRotate = !controls.autoRotate; e.currentTarget.setAttribute('aria-pressed', String(controls.autoRotate)); e.currentTarget.textContent = controls.autoRotate ? 'Kamera berputar' : 'Kamera diam'; });
 $('#speed').addEventListener('click', (e) => { speed = speed === 1 ? 0.5 : speed === 0.5 ? 0.25 : 1; if (mixer && playing) mixer.timeScale = speed; e.currentTarget.textContent = `Kecepatan ${speed}×`; });
 let moves = [];
@@ -273,6 +326,7 @@ renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.1); if
     const q = new URLSearchParams(location.search), start = Math.max(0, moves.findIndex((m) => m.key === q.get('gerak')));
     sel.value = String(start);
     await showArena(ARENAS[0]); await showMove(moves[start]);
+    await initMusic(); await buildCrowd();
   } catch (e) { fail(e); }
 })();
 </script>

@@ -1,0 +1,30 @@
+{
+ "bali_joged": {
+  "file": "assets/music/bali_joged.mp3",
+  "title": "Gamelan Djoged Tjedjing-Kereman (1931)",
+  "license": "Public domain",
+  "author": "Unknown authorUnknown author",
+  "url": "https://commons.wikimedia.org/wiki/File%3AGamelan_Djoged_Tjedjing-Kereman_%281931%29.oga"
+ },
+ "bali_gender": {
+  "file": "assets/music/bali_gender.mp3",
+  "title": "Gamelan gender Wayang ensemble accompanying Balinese Wayang puppetry",
+  "license": "CC BY-SA 4.0",
+  "author": "Prateek Pattanaik",
+  "url": "https://commons.wikimedia.org/wiki/File%3AGamelan_gender_Wayang_ensemble_accompanying_Balinese_Wayang_puppetry.wav"
+ },
+ "jawa_gambyong": {
+  "file": "assets/music/jawa_gambyong.mp3",
+  "title": "Gambyong pareanom kelajengaken mari kangen tanpan kendang & vocal",
+  "license": "CC BY 3.0",
+  "author": "Bedor PN",
+  "url": "https://commons.wikimedia.org/wiki/File%3AGambyong_pareanom_kelajengaken_mari_kangen_tanpan_kendang_%26_vocal.ogg"
+ },
+ "jawa_ketawang": {
+  "file": "assets/music/jawa_ketawang.mp3",
+  "title": "Ketawang Sekar Teja Slendro Manyura",
+  "license": "CC BY-SA 4.0",
+  "author": "Dandung Adityo Argo Prasetyo\nKarawitan Marta Yogiswara",
+  "url": "https://commons.wikimedia.org/wiki/File%3AKetawang_Sekar_Teja_Slendro_Manyura.oga"
+ }
+}
