@@ -15,7 +15,7 @@ from ultralytics import YOLO
 yolo = YOLO("yolov8m.pt")
 NW = int(sys.argv[2]) if len(sys.argv) > 2 else 2
 jobs = json.load(open(f"{TMP}/jobs.json"))[WORKER::NW]
-zs = {ds: zipfile.ZipFile(f"{TMP}/{ds}.zip") for ds in ("putri", "putra")}
+zs = {ds: zipfile.ZipFile(f"{TMP}/{ds}.zip") for ds in sorted({j[0] for j in jobs})}   # putri/putra (Mendeley) atau youtube
 half = True
 def infer(fr, b):
     global half

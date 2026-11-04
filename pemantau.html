@@ -42,7 +42,7 @@ a{color:var(--gold-b)}
 </head>
 <body>
 <div class="wrap">
-  <header><img src="assets/logo/naramotion-mark.png" alt="" width="44" height="43"><div><h1>Pemantau Kaggle</h1><p class="sub">NaraMotion · digitalisasi 3D gerak tari Bali</p></div></header>
+  <header><img src="assets/logo/naramotion-mark.png" alt="" width="44" height="43"><div><h1>Pemantau Kaggle</h1><p class="sub">NaraMotion · digitalisasi 3D video tari (YouTube)</p></div></header>
   <section class="card" id="sum"><p class="muted">Memuat…</p></section>
   <div id="sessions"></div>
   <section class="card">
@@ -53,8 +53,10 @@ a{color:var(--gold-b)}
 </div>
 <script>
 // Rencana putaran 2 (dipakai bila laptop tidak mengirim status): mulai 4 Nov 2026 10:48 WIB, 2 sesi × ±562 klip, ±65 klip/jam per sesi.
-const PLAN = { total: 2568, done0: 1445, rate: 65, setupMin: 20, limitH: 11,
-  sessions: [{ name: 'naramotion-sam3d-r1', started: '2026-11-04T10:48:40+07:00', clips: 562 }, { name: 'naramotion-sam3d-r2', started: '2026-11-04T10:48:40+07:00', clips: 561 }] };
+// Pekerjaan aktif: digitalisasi 56 klip YouTube (45 detik, 29 jenis tari) di 2 sesi Kaggle; ±8 klip/jam per sesi (2×T4).
+// Angka pasti dibaca dari /progress/<sesi>_w<worker> yang dikirim worker Kaggle.
+const PLAN = { total: 56, done0: 0, rate: 8, setupMin: 12, limitH: 11,
+  sessions: [{ name: 'naramotion-sam3d-y1', started: '2026-11-05T06:09:24+07:00', clips: 28 }, { name: 'naramotion-sam3d-y2', started: '2026-11-05T06:09:24+07:00', clips: 28 }] };
 const DB = 'https://naramotion-default-rtdb.firebaseio.com/monitor.json';
 const $ = (s) => document.querySelector(s);
 const fmt = (d) => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -86,7 +88,7 @@ async function tick() {
   })));
   const sess = PLAN.sessions.map((s) => { const x = { ...s, ...estimate(s, now), status: stOf(s.name) }; const e = exact[s.name];
     if (e && e.total) { x.est = e.done; x.clips = e.total; x.exact = true; x.lastT = e.t; } return x; });
-  const done = live && live.sam3d && live.sam3d.local != null ? live.sam3d.local : PLAN.done0;
+  const done = PLAN.done0;   // pekerjaan YouTube: jumlah pasti datang dari /progress per sesi
   const allDone = sess.every((s) => s.status === 'COMPLETE' || s.status === 'ERROR');
   const est = allDone ? 0 : sess.reduce((a, s) => a + (s.status === 'COMPLETE' ? s.clips : s.est), 0);
   const total = Math.min(PLAN.total, Math.round(done + est)), pct = total / PLAN.total * 100;
@@ -94,7 +96,7 @@ async function tick() {
   const badge = allDone ? '<span class="badge ok"><span class="dot"></span>selesai</span>'
     : sess.some((s) => s.over) ? '<span class="badge muted"><span class="dot"></span>mestinya sudah selesai</span>'
     : '<span class="badge run"><span class="dot"></span>berjalan</span>';
-  $('#sum').innerHTML = `<div class="head"><h2>Klip tari yang sudah jadi 3D</h2>${badge}</div>
+  $('#sum').innerHTML = `<div class="head"><h2>Klip YouTube yang sudah jadi 3D</h2>${badge}</div>
     <p class="big">±${total.toLocaleString('id-ID')}<small>/ ${PLAN.total.toLocaleString('id-ID')} klip</small></p>
     <div class="bar" role="img" aria-label="Progres ${pct.toFixed(0)} persen"><i style="width:${(done / PLAN.total * 100).toFixed(1)}%"></i><em style="left:${(done / PLAN.total * 100).toFixed(1)}%;width:${(Math.max(0, total - done) / PLAN.total * 100).toFixed(1)}%"></em></div>
     <div class="meta"><div><b>${pct.toFixed(0)}%</b><span>perkiraan progres</span></div><div><b>${fmt(eta)}</b><span>perkiraan selesai (WIB)</span></div>
