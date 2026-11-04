@@ -47,7 +47,8 @@ select{width:100%;font:15px Spectral,serif;color:var(--cream);background:rgba(0,
 <aside class="panel" aria-label="Kendali arena">
   <div><p class="lbl">Arena</p><div class="chips" id="arenas"></div></div>
   <div><p class="lbl">Gerak tari</p><select id="move" aria-label="Pilih gerak tari"></select></div>
-  <div><p class="lbl">Penari</p><div class="chips" id="looks"></div></div>
+  <div><p class="lbl">Karakter</p><div class="chips" id="chars"></div></div>
+  <div><p class="lbl">Tampilan</p><div class="chips" id="looks"></div></div>
   <div class="row">
     <button type="button" class="btn" id="play">Jeda</button>
     <button type="button" class="btn line" id="orbit" aria-pressed="true">Kamera berputar</button>
@@ -58,6 +59,7 @@ select{width:100%;font:15px Spectral,serif;color:var(--cream);background:rgba(0,
     <div class="row" style="margin-top:6px"><button type="button" class="btn" id="mplay">Putar musik</button><label class="info"><input type="checkbox" id="crowd" checked> Penonton</label></div></div>
   <p class="credit" id="credit"></p>
   <p class="credit" id="mcredit"></p>
+  <p class="credit" id="ccredit"></p>
   <audio id="audio" loop preload="none"></audio>
 </aside>
 <script type="module">
@@ -90,7 +92,13 @@ const ARENAS = [
     desc: 'Panggung pertunjukan malam dengan lampu sorot dan iringan gamelan.' },
 ];
 const PROPS = { gamelan: { file: 'assets/arena/gamelan.glb', size: 3.2, credit: '“GAMELAN JAWA” oleh eventdesignws', url: 'https://sketchfab.com/eventdesignws' } };
-const LOOKS = [{ id: 'emas', name: 'Patung emas' }, { id: 'manekin', name: 'Manekin' }, { id: 'tanah', name: 'Terakota' }];
+const LOOKS = [{ id: 'asli', name: 'Asli' }, { id: 'emas', name: 'Patung emas' }, { id: 'tanah', name: 'Terakota' }];
+// karakter rig: Y Bot (satu .glb per gerak) atau karakter + animasi terpisah (rig Mixamo yang sama, hasil blender/sam3d_retarget.py)
+const CHARS = [
+  { id: 'michelle', name: 'Michelle', base: 'assets/ml/rig_michelle/base.glb', dir: 'assets/ml/rig_michelle/', credit: 'Karakter “Michelle” (Adobe Mixamo, lewat contoh three.js)' },
+  { id: 'ybot', name: 'Manekin Y Bot', credit: 'Karakter Y Bot (Adobe Mixamo)' },
+];
+let charId = 'michelle';
 
 // ---------- renderer & pascaproses (tone mapping ACES, bayangan lembut, bloom halus) ----------
 const canvas = $('#c');
@@ -230,24 +238,28 @@ function clearCamera(a) {
 window.__arena = { camera, controls, scene, get dancer() { return dancer; }, dancerSpot };
 
 // ---------- penari (rig Y Bot + animasi hasil digitalisasi) ----------
-let dancer = null, mixer = null, action = null, look = 'emas', speed = 1, playing = true;
+let dancer = null, mixer = null, action = null, look = 'asli', speed = 1, playing = true, curMove = null;
 const MATS = {
   emas: new THREE.MeshPhysicalMaterial({ color: 0xd9a54f, metalness: 1, roughness: 0.28, clearcoat: 0.4, clearcoatRoughness: 0.2 }),
   tanah: new THREE.MeshStandardMaterial({ color: 0xa4553a, roughness: 0.78, metalness: 0 }),
-  manekin: null,
+  asli: null,
 };
 function applyLook() {
   if (!dancer) return;
   dancer.traverse((o) => { if (o.isSkinnedMesh) { o.userData.orig ??= o.material; o.material = MATS[look] || o.userData.orig; o.castShadow = true; o.receiveShadow = true; } });
 }
 async function showMove(m) {
-  $('#load').hidden = false; $('#load').textContent = `Memuat gerak ${m.gerak}…`;
-  const gl = await load(m.rig);
+  curMove = m; $('#load').hidden = false; $('#load').textContent = `Memuat gerak ${m.gerak}…`;
+  const ch = CHARS.find((c) => c.id === charId);
+  let gl, clip;
+  if (ch.base) { const [b, an] = await Promise.all([load(ch.base), load(ch.dir + m.key + '.glb')]); gl = b; clip = an.animations[0]; }
+  else { gl = await load(m.rig); clip = gl.animations[0]; }
   if (dancer) scene.remove(dancer);
   dancer = gl.scene; dancer.position.copy(dancerSpot);
   dancer.traverse((o) => { if (o.isMesh && !o.isSkinnedMesh) o.visible = false; });   // sembunyikan objek bantu non-karakter
   scene.add(dancer); applyLook();
-  mixer = new THREE.AnimationMixer(dancer); action = mixer.clipAction(gl.animations[0]); action.play(); mixer.timeScale = playing ? speed : 0;
+  mixer = new THREE.AnimationMixer(dancer); action = mixer.clipAction(clip); action.play(); mixer.timeScale = playing ? speed : 0;
+  $('#ccredit').textContent = ch.credit + '.';
   if (MUSIC && !userPickedMusic) setMusic(m.ds === 'putra' ? 'bali_gender' : 'bali_joged', false);
   $('#load').hidden = true;
 }
@@ -299,6 +311,8 @@ $('#crowd').addEventListener('change', (e) => { crowdOn = e.target.checked; crow
 // ---------- UI ----------
 const arenaBox = $('#arenas'), lookBox = $('#looks'), sel = $('#move');
 arenaBox.innerHTML = ARENAS.map((a, i) => `<button type="button" class="chip" data-arena="${a.id}" aria-pressed="${i === 0}">${a.name}</button>`).join('');
+$('#chars').innerHTML = CHARS.map((c, i) => `<button type="button" class="chip" data-char="${c.id}" aria-pressed="${i === 0}">${c.name}</button>`).join('');
+$('#chars').addEventListener('click', (e) => { const b = e.target.closest('[data-char]'); if (!b) return; $('#chars').querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); charId = b.dataset.char; if (curMove) showMove(curMove).catch(fail); });
 lookBox.innerHTML = LOOKS.map((l, i) => `<button type="button" class="chip" data-look="${l.id}" aria-pressed="${i === 0}">${l.name}</button>`).join('');
 arenaBox.addEventListener('click', (e) => { const b = e.target.closest('[data-arena]'); if (!b) return; arenaBox.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); showArena(ARENAS.find((a) => a.id === b.dataset.arena)).catch(fail); });
 lookBox.addEventListener('click', (e) => { const b = e.target.closest('[data-look]'); if (!b) return; lookBox.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); look = b.dataset.look; applyLook(); });
