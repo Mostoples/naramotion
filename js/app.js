@@ -483,6 +483,7 @@
       camScore.textContent = sc;
       const hit = r.top[0][0] === r.target;
       camGrade.textContent = (sc >= 85 ? 'Sangat mirip acuan' : sc >= 70 ? 'Baik, sedikit lagi' : sc >= 50 ? 'Perlu latihan' : 'Ikuti gerak acuan') + (hit ? '' : ' · terbaca sebagai ' + r.top[0][0].replace(/_/g, ' '));
+      const cm = $('#cam-mode'); if (cm) cm.textContent = r.mode === '3d' ? 'Skor 3D · tidak bergantung sudut kamera' : 'Skor 2D · hadap kamera dari depan';
       camTop.innerHTML = r.top.map(([c, p]) => `<li><span>${esc(c.replace(/_/g, ' '))}</span><b>${Math.round(p * 100)}%</b><span class="bar"><span style="width:${(p * 100).toFixed(1)}%"></span></span></li>`).join('');
       for (const n of M.NODES) st.err[n.id] = st.err[n.id] == null ? r.err[n.id] : st.err[n.id] * 0.6 + r.err[n.id] * 0.4;
       st.lag = 0; renderRows(); renderFeedback();
