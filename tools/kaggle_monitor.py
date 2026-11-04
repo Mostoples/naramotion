@@ -21,7 +21,10 @@ if not Path(KAGGLE).exists():
     import sysconfig; KAGGLE = str(Path(sysconfig.get_path("scripts", f"{os.name}_user")) / ("kaggle.exe" if os.name == "nt" else "kaggle"))
 ENV = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
 # Perkiraan durasi per kernel (menit) untuk bilah perkiraan; bukan progres sungguhan.
-EXPECT = {"naramotion-pose-extract": (120, 210), "naramotion-train-gesture": (10, 25)}
+EXPECT = {"naramotion-pose-extract": (120, 210), "naramotion-train-gesture": (10, 25),
+          "naramotion-sam3d-r1": (480, 660), "naramotion-sam3d-r2": (480, 660)}
+# SAM 3D Body: 2.568 klip; putaran 2 (r1, r2) masing-masing ±562 klip, laju terukur putaran 1 ±65 klip/jam per sesi (2×T4)
+SAM3D_TOTAL, SAM3D_RATE, SAM3D_SETUP_MIN = 2568, 65.0, 20
 
 lock = threading.Lock()
 state = json.loads(STATE_F.read_text("utf-8")) if STATE_F.exists() else {}
@@ -37,7 +40,8 @@ def download(ref, name):
     out = RUNS / name
     if out.exists(): shutil.rmtree(out)
     out.mkdir(parents=True)
-    kaggle("kernels", "output", ref, "-p", str(out), timeout=1800)
+    # CLI resmi hanya mengambil ±500 file pertama → pakai pengunduh semua halaman
+    subprocess.run([sys.executable, str(ROOT / "tools/kaggle_output_all.py"), ref, str(out)], env=ENV, timeout=3600, capture_output=True)
     with lock: state[name]["downloaded"] = datetime.now().isoformat(timespec="seconds"); save_state()
 
 def summarise(name):
@@ -85,7 +89,18 @@ def poll():
                                elapsed=round((end - start).total_seconds() / 60, 1) if start else None,
                                expect=EXPECT.get(name), downloaded=s.get("downloaded"),
                                url=f"https://www.kaggle.com/code/{ref}", result=summarise(name)))
-            with lock: snapshot.update(kernels=ks, checked=datetime.now().isoformat(timespec="seconds"), error=None)
+            # ringkasan SAM 3D Body: klip yang sudah ada di laptop + perkiraan klip yang sedang diproses di Kaggle
+            local = len({p.stem + p.parent.name + p.parts[-4] for p in RUNS.glob("sam3d_*/sam3d/*/*/*/*.npz")} |
+                        {p.stem + p.parent.name + p.parts[-4] for p in RUNS.glob("naramotion-sam3d-r*/sam3d/*/*/*/*.npz")})
+            running = [k for k in ks if k["name"].startswith("naramotion-sam3d-r")]
+            per = (SAM3D_TOTAL - 1445) / max(1, len(running)) if running else 0
+            est = sum(min(per, max(0, (k["elapsed"] or 0) - SAM3D_SETUP_MIN) / 60 * SAM3D_RATE) for k in running if k["status"] in ("RUNNING", "QUEUED"))
+            eta = [k for k in running if k["status"] in ("RUNNING", "QUEUED") and k["started"]]
+            eta_t = max((datetime.fromisoformat(k["started"]).timestamp() + (SAM3D_SETUP_MIN + per / SAM3D_RATE * 60) * 60 for k in eta), default=None)
+            sam = dict(total=SAM3D_TOTAL, local=local, est_running=int(est), eta=datetime.fromtimestamp(eta_t).isoformat(timespec="minutes") if eta_t else None,
+                       sessions=len([k for k in running if k["status"] in ("RUNNING", "QUEUED")]))
+            ks.sort(key=lambda k: (k["status"] not in ("RUNNING", "QUEUED"), not k["name"].startswith("naramotion-sam3d"), k["name"]))
+            with lock: snapshot.update(kernels=ks, sam3d=sam, checked=datetime.now().isoformat(timespec="seconds"), error=None)
         except Exception as e:
             with lock: snapshot.update(error=str(e), checked=datetime.now().isoformat(timespec="seconds"))
         time.sleep(60)
@@ -115,8 +130,8 @@ pre{background:rgba(0,0,0,.3);border-radius:10px;padding:10px;font:12px/1.45 IBM
 table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:500}
 .foot{margin-top:18px;color:var(--dim);font-size:13px}.err{color:var(--bad)}
 </style></head><body><div class="wrap">
-<h1>Pemantau Kaggle</h1><div class="sub">NaraMotion · ekstraksi pose &amp; pelatihan gerak</div>
-<div id="list"></div><div class="foot" id="foot"></div></div>
+<h1>Pemantau Kaggle</h1><div class="sub">NaraMotion · SAM 3D Body, ekstraksi pose &amp; pelatihan gerak</div>
+<div id="sam"></div><div id="list"></div><div class="foot" id="foot"></div></div>
 <script>
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const t=iso=>iso?new Date(iso).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'—';
@@ -143,6 +158,12 @@ function card(k){
 }
 async function tick(){
   try{const s=await (await fetch('/api/status')).json();
+    const m=s.sam3d; if(m){const a=m.local/m.total*100, b=m.est_running/m.total*100;
+      $('#sam').innerHTML=`<section class="card"><div class="head"><h2>Digitalisasi 3D semua klip (SAM 3D Body)</h2><span class="badge ${m.sessions?'RUNNING':'COMPLETE'}"><span class="dot"></span>${m.sessions?m.sessions+' sesi berjalan':'tidak ada sesi'}</span></div>
+      <div class="meta"><div><b>${m.local.toLocaleString('id-ID')}</b><span>klip selesai (sudah di laptop)</span></div><div><b>±${m.est_running.toLocaleString('id-ID')}</b><span>perkiraan sedang diproses di Kaggle</span></div>
+      <div><b>${m.total.toLocaleString('id-ID')}</b><span>total klip</span></div><div><b>${m.eta?t(m.eta):'—'}</b><span>perkiraan selesai</span></div></div>
+      <div class="bar"><i style="width:${a.toFixed(1)}%"></i><em style="left:${a.toFixed(1)}%;width:${b.toFixed(1)}%"></em></div>
+      <div class="note">Emas = sudah selesai, pita terang = perkiraan klip yang sedang dikerjakan (±65 klip/jam per sesi). Angka pasti muncul setelah sesi selesai dan hasilnya terunduh otomatis.</div></section>`;}
     $('#list').innerHTML=s.kernels.length?s.kernels.map(card).join(''):'<section class="card">Memeriksa Kaggle…</section>';
     $('#foot').innerHTML=`Diperiksa ${t(s.checked)} · otomatis tiap 60 detik${s.error?` · <span class="err">${esc(s.error)}</span>`:''}`;
   }catch(e){$('#foot').innerHTML='<span class="err">Server pemantau tidak menjawab.</span>'}
