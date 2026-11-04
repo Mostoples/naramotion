@@ -13,7 +13,7 @@
 "key": "putri__Agem_Kiri",
 "clip": "Agem_Kiri_71",
 "rig": "assets/ml/rig/putri__Agem_Kiri.glb",
-"rig_clip": "Agem_Kiri_7"
+"rig_clip": "Agem_Kiri_71"
 },
 {
 "ds": "putri",
@@ -37,7 +37,7 @@
 "key": "putri__Ngelo",
 "clip": "Ngelo_139",
 "rig": "assets/ml/rig/putri__Ngelo.glb",
-"rig_clip": "Ngelo_126"
+"rig_clip": "Ngelo_139"
 },
 {
 "ds": "putri",
@@ -61,7 +61,7 @@
 "key": "putri__Ngumbang",
 "clip": "Ngumbang_129",
 "rig": "assets/ml/rig/putri__Ngumbang.glb",
-"rig_clip": "Ngumbang_127"
+"rig_clip": "Ngumbang_129"
 },
 {
 "ds": "putri",
@@ -85,7 +85,7 @@
 "key": "putri__Seledet",
 "clip": "Seledet_100",
 "rig": "assets/ml/rig/putri__Seledet.glb",
-"rig_clip": "Seledet_50"
+"rig_clip": "Seledet_100"
 },
 {
 "ds": "putri",
@@ -117,7 +117,7 @@
 "key": "putra__Agem_Kiri",
 "clip": "Agem_Kiri_40",
 "rig": "assets/ml/rig/putra__Agem_Kiri.glb",
-"rig_clip": "Agem_Kiri_11"
+"rig_clip": "Agem_Kiri_40"
 },
 {
 "ds": "putra",
@@ -141,7 +141,7 @@
 "key": "putra__Nayog",
 "clip": "Nayog_43",
 "rig": "assets/ml/rig/putra__Nayog.glb",
-"rig_clip": "Nayog_44"
+"rig_clip": "Nayog_43"
 },
 {
 "ds": "putra",
@@ -157,7 +157,7 @@
 "key": "putra__Oyod",
 "clip": "Oyod_36",
 "rig": "assets/ml/rig/putra__Oyod.glb",
-"rig_clip": "Oyod_01"
+"rig_clip": "Oyod_36"
 },
 {
 "ds": "putra",
@@ -165,7 +165,7 @@
 "key": "putra__Piles",
 "clip": "Piles_18",
 "rig": "assets/ml/rig/putra__Piles.glb",
-"rig_clip": "Piles_09"
+"rig_clip": "Piles_18"
 },
 {
 "ds": "putra",
@@ -189,6 +189,6 @@
 "key": "putra__Ulap_Ulap",
 "clip": "Ulap_Ulap_40",
 "rig": "assets/ml/rig/putra__Ulap_Ulap.glb",
-"rig_clip": "Ulap_Ulap_06"
+"rig_clip": "Ulap_Ulap_40"
 }
 ]
