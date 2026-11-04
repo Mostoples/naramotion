@@ -74,7 +74,18 @@ async function tick() {
   try { const r = await fetch(DB, { cache: 'no-store' }); if (r.ok) live = await r.json(); } catch (e) { /* luring: pakai perkiraan */ }
   const fresh = live && live.updated && now - new Date(live.updated).getTime() < 5 * 6e4;
   const stOf = (name) => live && live.kernels ? (live.kernels.find((k) => k.name === name) || {}).status : null;
-  const sess = PLAN.sessions.map((s) => ({ ...s, ...estimate(s, now), status: stOf(s.name) }));
+  // progres pasti dari worker Kaggle (bila sesi mengirimnya): /progress/<r1|r2>_w<0|1>/{done,total,t}
+  const exact = {};
+  await Promise.all(PLAN.sessions.flatMap((s) => [0, 1].map(async (w) => {
+    const id = s.name.replace('naramotion-sam3d-', '') + '_w' + w;
+    try {
+      const get = async (f) => (await fetch(`https://naramotion-default-rtdb.firebaseio.com/progress/${id}/${f}.json`, { cache: 'no-store' })).json();
+      const [d, t, ts] = await Promise.all([get('done'), get('total'), get('t')]);
+      if (typeof d === 'number') { const e = exact[s.name] || (exact[s.name] = { done: 0, total: 0, t: 0 }); e.done += d; e.total += t; e.t = Math.max(e.t, ts); }
+    } catch (e) { /* belum ada */ }
+  })));
+  const sess = PLAN.sessions.map((s) => { const x = { ...s, ...estimate(s, now), status: stOf(s.name) }; const e = exact[s.name];
+    if (e && e.total) { x.est = e.done; x.clips = e.total; x.exact = true; x.lastT = e.t; } return x; });
   const done = live && live.sam3d && live.sam3d.local != null ? live.sam3d.local : PLAN.done0;
   const allDone = sess.every((s) => s.status === 'COMPLETE' || s.status === 'ERROR');
   const est = allDone ? 0 : sess.reduce((a, s) => a + (s.status === 'COMPLETE' ? s.clips : s.est), 0);
@@ -94,7 +105,7 @@ async function tick() {
     const cls = s.status === 'COMPLETE' ? 'ok' : s.status === 'ERROR' ? 'bad' : s.over ? 'muted' : 'run';
     return `<section class="card"><div class="head"><h2>${esc(s.name.replace('naramotion-', ''))}</h2><span class="badge ${cls}"><span class="dot"></span>${esc(st)}</span></div>
       <div class="meta"><div><b>${fmt(new Date(s.started))}</b><span>mulai</span></div><div><b>${Math.floor(s.runMin / 60)} j ${Math.round(s.runMin % 60)} m</b><span>sudah berjalan</span></div>
-      <div><b>±${Math.round(s.status === 'COMPLETE' ? s.clips : s.est)} / ${s.clips}</b><span>klip (perkiraan)</span></div><div><b>${fmt(s.eta)}</b><span>perkiraan selesai</span></div></div>
+      <div><b>${s.exact ? '' : '±'}${Math.round(s.status === 'COMPLETE' ? s.clips : s.est)} / ${s.clips}</b><span>klip (${s.exact ? 'pasti, dari Kaggle ' + fmt(new Date(s.lastT * 1000)) : 'perkiraan'})</span></div><div><b>${fmt(s.eta)}</b><span>perkiraan selesai</span></div></div>
       <div class="bar"><i style="width:${Math.min(100, (s.status === 'COMPLETE' ? 1 : s.est / s.clips) * 100).toFixed(1)}%"></i></div>
       <a class="btn" href="https://www.kaggle.com/code/mostoplesrinelan/${esc(s.name)}" target="_blank" rel="noopener">Buka log di Kaggle</a></section>`;
   }).join('');

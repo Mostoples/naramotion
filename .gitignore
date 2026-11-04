@@ -20,3 +20,7 @@ node_modules/
 paper/_*.html
 .DS_Store
 Thumbs.db
+
+# kunci tulis progres Kaggle & kernel hasil generator (berisi kunci)
+ml/kaggle/.progress_key
+ml/kaggle/sam3d_r*/sam3d_rest.py

@@ -27,6 +27,15 @@ def infer(fr, b):
             half = False; log("fp16 gagal, pakai fp32:", str(e)[:200])
     return est.process_one_image(fr, bboxes=b[None])
 t_all, n_fr = time.time(), 0
+import urllib.request
+PKEY, PNAME = os.environ.get("NARA_PKEY", ""), os.environ.get("NARA_PNAME", "")
+def progress(done):   # jumlah klip pasti → Firebase /progress/<sesi>_w<worker> (dibaca naramotion.web.app/pemantau.html)
+    if not PKEY: return
+    try:
+        body = json.dumps({"key": PKEY, "done": done, "total": len(jobs), "t": int(time.time())}).encode()
+        urllib.request.urlopen(urllib.request.Request(f"https://naramotion-default-rtdb.firebaseio.com/progress/{PNAME}_w{WORKER}.json", data=body, method="PUT"), timeout=10)
+    except Exception: pass
+progress(0)
 for j, (ds, name) in enumerate(jobs):
     if time.time() > T_END:
         log("batas waktu, berhenti di", j, "/", len(jobs)); break
@@ -52,6 +61,6 @@ for j, (ds, name) in enumerate(jobs):
         i += 1
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     if rec: np.savez_compressed(dst, size=size, **{k: np.stack(v) for k, v in rec.items()})
-    n_fr += len(rec.get("t", []))
+    n_fr += len(rec.get("t", [])); progress(j + 1)
     if j % 20 == 0: log(f"[{j+1}/{len(jobs)}] {ds}/{cls}/{fn} · {n_fr} frame · {(time.time()-t_all)/max(n_fr,1):.2f} s/frame · fp16={half}")
 log("worker selesai", n_fr, "frame")

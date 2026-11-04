@@ -20,12 +20,14 @@ src = src.replace('from huggingface_hub import snapshot_download',
                   '# unduh repo DINOv3 untuk torch.hub SEKALI di sini (dua worker serentak merusak cache → ImportError di putaran 1)\n'
                   'import torch; torch.hub.list("facebookresearch/dinov3", trust_repo=True); log("hub dinov3 siap")\n'
                   'from huggingface_hub import snapshot_download')
+PKEY = (K / ".progress_key").read_text().strip() if (K / ".progress_key").exists() else ""
+src = src.replace('env={**os.environ, "CUDA_VISIBLE_DEVICES": str(k)}', 'env={**os.environ, "CUDA_VISIBLE_DEVICES": str(k), "NARA_PKEY": "__PKEY__", "NARA_PNAME": "__PNAME__"}')
 src = src.replace('procs = [subprocess.Popen([sys.executable, f"{TMP}/worker.py", str(k), str(NG)], env={**os.environ, "CUDA_VISIBLE_DEVICES": str(k)}) for k in range(NG)]',
                   'procs = []\nfor k in range(NG):\n    procs.append(subprocess.Popen([sys.executable, f"{TMP}/worker.py", str(k), str(NG)], env={**os.environ, "CUDA_VISIBLE_DEVICES": str(k)}))\n    if k < NG - 1: time.sleep(90)   # beri jeda agar pemuatan model tidak bertabrakan')
 assert "__B64__" not in src and "DONE = set" in src and "time.sleep(90)" in src and "torch.hub.list" in src and "sisa" in src
 for s in range(N):
     d = K / f"sam3d_r{s + 1}"; d.mkdir(exist_ok=True)
-    (d / "sam3d_rest.py").write_text(src.replace("__SHARD__", str(s)).replace("__N__", str(N)), encoding="utf-8")
+    (d / "sam3d_rest.py").write_text(src.replace("__SHARD__", str(s)).replace("__N__", str(N)).replace("__PKEY__", PKEY).replace("__PNAME__", f"r{s + 1}"), encoding="utf-8")
     json.dump({"id": f"mostoplesrinelan/naramotion-sam3d-r{s + 1}", "title": f"NaraMotion SAM3D R{s + 1}", "code_file": "sam3d_rest.py",
                "language": "python", "kernel_type": "script", "is_private": True, "enable_gpu": True, "enable_internet": True,
                "dataset_sources": ["mostoplesrinelan/naramotion-hf-token"], "competition_sources": [], "kernel_sources": []},

@@ -52,6 +52,30 @@
     "monitor": {
       ".read": true,
       ".write": false
+    },
+    "progress": {
+      "$k": {
+        ".write": "newData.child('key').val() === 'REMOVED'",
+        ".validate": "newData.hasChildren(['key','done','total','t'])",
+        "done": {
+          ".read": true,
+          ".validate": "newData.isNumber()"
+        },
+        "total": {
+          ".read": true,
+          ".validate": "newData.isNumber()"
+        },
+        "t": {
+          ".read": true,
+          ".validate": "newData.isNumber()"
+        },
+        "key": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }
