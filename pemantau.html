@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0704">
+<meta name="robots" content="noindex">
+<title>Pemantau Kaggle · NaraMotion</title>
+<link rel="icon" href="assets/logo/favicon-64.png" type="image/png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Spectral:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* satu kolom ramah ponsel: kartu ringkasan progres, lalu kartu tiap sesi Kaggle */
+:root{--ink:#120b07;--surface:#1b110b;--line:rgba(212,163,96,.18);--gold:#c08a4c;--gold-b:#dcaa66;--pale:#f0d3a2;--cream:#f1e4c8;--muted:#b3a184;--dim:#857456;--ok:#a3c476;--warn:#e0a645;--bad:#d66a4b;--maroon:#8e1b22}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--cream);font:16px/1.5 Spectral,Georgia,serif;padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:center;gap:12px}
+header img{width:44px;height:auto}
+h1{font:700 clamp(22px,6vw,30px)/1.1 Cinzel,serif;color:var(--gold-b);margin:0}
+.sub{color:var(--muted);font:500 11px IBM Plex Mono,monospace;letter-spacing:.1em;text-transform:uppercase;margin:2px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:6px 6px 14px rgba(0,0,0,.55)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h2{font:600 17px Cinzel,serif;color:var(--gold-b);margin:0}
+.badge{font:500 12px IBM Plex Mono,monospace;padding:4px 10px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.run{color:var(--warn)}.ok{color:var(--ok)}.bad{color:var(--bad)}.muted{color:var(--muted)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:1px}
+@media (prefers-reduced-motion:no-preference){.run .dot{animation:p 1.4s infinite}@keyframes p{50%{opacity:.25}}}
+.big{font:700 clamp(40px,14vw,64px)/1 Cinzel,serif;color:var(--pale);margin:14px 0 2px;font-variant-numeric:tabular-nums}
+.big small{font:500 15px IBM Plex Mono,monospace;color:var(--muted);margin-left:6px}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
+.meta div{background:rgba(0,0,0,.25);border-radius:10px;padding:8px 10px;min-width:0}
+.meta b{display:block;font:600 17px IBM Plex Mono,monospace;color:var(--pale);font-variant-numeric:tabular-nums}
+.meta span{font-size:12.5px;color:var(--muted)}
+.bar{height:12px;border-radius:99px;background:rgba(0,0,0,.4);overflow:hidden;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--gold),var(--gold-b));border-radius:99px}
+.bar em{position:absolute;top:0;bottom:0;background:rgba(220,170,102,.28)}
+.note{font-size:13.5px;color:var(--muted);margin:8px 0 0}
+a{color:var(--gold-b)}
+.btn{display:inline-block;margin-top:10px;padding:9px 14px;border-radius:99px;border:1px solid var(--gold);color:var(--gold-b);text-decoration:none;font:500 13px IBM Plex Mono,monospace}
+.foot{font-size:13px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="assets/logo/naramotion-mark.png" alt="" width="44" height="43"><div><h1>Pemantau Kaggle</h1><p class="sub">NaraMotion · digitalisasi 3D gerak tari Bali</p></div></header>
+  <section class="card" id="sum"><p class="muted">Memuat…</p></section>
+  <div id="sessions"></div>
+  <section class="card">
+    <h2>Kalau laptop mati</h2>
+    <p class="note">Proses tetap berjalan di server Kaggle. Halaman ini tetap menghitung perkiraan progres dari jam mulai. Status pasti dikirim laptop setiap menit selama laptop menyala; log lengkap bisa dibuka di Kaggle (perlu masuk akun Kaggle).</p>
+  </section>
+  <p class="foot" id="foot"></p>
+</div>
+<script>
+// Rencana putaran 2 (dipakai bila laptop tidak mengirim status): mulai 4 Nov 2026 10:48 WIB, 2 sesi × ±562 klip, ±65 klip/jam per sesi.
+const PLAN = { total: 2568, done0: 1445, rate: 65, setupMin: 20, limitH: 11,
+  sessions: [{ name: 'naramotion-sam3d-r1', started: '2026-11-04T10:48:40+07:00', clips: 562 }, { name: 'naramotion-sam3d-r2', started: '2026-11-04T10:48:40+07:00', clips: 561 }] };
+const DB = 'https://naramotion-default-rtdb.firebaseio.com/monitor.json';
+const $ = (s) => document.querySelector(s);
+const fmt = (d) => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+const fmtD = (d) => d.toLocaleString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function estimate(s, now) {
+  const t0 = new Date(s.started).getTime(), runMin = (now - t0) / 6e4;
+  const est = Math.min(s.clips, Math.max(0, (runMin - PLAN.setupMin) / 60 * PLAN.rate));
+  const eta = new Date(t0 + (PLAN.setupMin + s.clips / PLAN.rate * 60) * 6e4), hard = new Date(t0 + PLAN.limitH * 36e5);
+  return { runMin, est, eta, hard, over: now > Math.min(eta, hard) };
+}
+
+async function tick() {
+  const now = Date.now();
+  let live = null;
+  try { const r = await fetch(DB, { cache: 'no-store' }); if (r.ok) live = await r.json(); } catch (e) { /* luring: pakai perkiraan */ }
+  const fresh = live && live.updated && now - new Date(live.updated).getTime() < 5 * 6e4;
+  const stOf = (name) => live && live.kernels ? (live.kernels.find((k) => k.name === name) || {}).status : null;
+  const sess = PLAN.sessions.map((s) => ({ ...s, ...estimate(s, now), status: stOf(s.name) }));
+  const done = live && live.sam3d && live.sam3d.local != null ? live.sam3d.local : PLAN.done0;
+  const allDone = sess.every((s) => s.status === 'COMPLETE' || s.status === 'ERROR');
+  const est = allDone ? 0 : sess.reduce((a, s) => a + (s.status === 'COMPLETE' ? s.clips : s.est), 0);
+  const total = Math.min(PLAN.total, Math.round(done + est)), pct = total / PLAN.total * 100;
+  const eta = new Date(Math.max(...sess.map((s) => s.eta.getTime())));
+  const badge = allDone ? '<span class="badge ok"><span class="dot"></span>selesai</span>'
+    : sess.some((s) => s.over) ? '<span class="badge muted"><span class="dot"></span>mestinya sudah selesai</span>'
+    : '<span class="badge run"><span class="dot"></span>berjalan</span>';
+  $('#sum').innerHTML = `<div class="head"><h2>Klip tari yang sudah jadi 3D</h2>${badge}</div>
+    <p class="big">±${total.toLocaleString('id-ID')}<small>/ ${PLAN.total.toLocaleString('id-ID')} klip</small></p>
+    <div class="bar" role="img" aria-label="Progres ${pct.toFixed(0)} persen"><i style="width:${(done / PLAN.total * 100).toFixed(1)}%"></i><em style="left:${(done / PLAN.total * 100).toFixed(1)}%;width:${(Math.max(0, total - done) / PLAN.total * 100).toFixed(1)}%"></em></div>
+    <div class="meta"><div><b>${pct.toFixed(0)}%</b><span>perkiraan progres</span></div><div><b>${fmt(eta)}</b><span>perkiraan selesai (WIB)</span></div>
+    <div><b>${done.toLocaleString('id-ID')}</b><span>pasti selesai</span></div><div><b>±${Math.round(est).toLocaleString('id-ID')}</b><span>perkiraan sedang diproses</span></div></div>
+    <p class="note">Emas = sudah pasti selesai; pita terang = perkiraan dari lama berjalan (±${PLAN.rate} klip/jam per sesi). Batas paling lambat ${fmt(sess[0].hard)} (batas 11 jam sesi Kaggle).</p>`;
+  $('#sessions').innerHTML = sess.map((s) => {
+    const st = s.status || (s.over ? 'perkiraan selesai' : 'berjalan (perkiraan)');
+    const cls = s.status === 'COMPLETE' ? 'ok' : s.status === 'ERROR' ? 'bad' : s.over ? 'muted' : 'run';
+    return `<section class="card"><div class="head"><h2>${esc(s.name.replace('naramotion-', ''))}</h2><span class="badge ${cls}"><span class="dot"></span>${esc(st)}</span></div>
+      <div class="meta"><div><b>${fmt(new Date(s.started))}</b><span>mulai</span></div><div><b>${Math.floor(s.runMin / 60)} j ${Math.round(s.runMin % 60)} m</b><span>sudah berjalan</span></div>
+      <div><b>±${Math.round(s.status === 'COMPLETE' ? s.clips : s.est)} / ${s.clips}</b><span>klip (perkiraan)</span></div><div><b>${fmt(s.eta)}</b><span>perkiraan selesai</span></div></div>
+      <div class="bar"><i style="width:${Math.min(100, (s.status === 'COMPLETE' ? 1 : s.est / s.clips) * 100).toFixed(1)}%"></i></div>
+      <a class="btn" href="https://www.kaggle.com/code/mostoplesrinelan/${esc(s.name)}" target="_blank" rel="noopener">Buka log di Kaggle</a></section>`;
+  }).join('');
+  $('#foot').textContent = (fresh ? `Status langsung dari laptop, diperbarui ${fmtD(new Date(live.updated))}.`
+    : live && live.updated ? `Laptop terakhir mengirim status ${fmtD(new Date(live.updated))}; angka di atas perkiraan dari jam mulai.`
+    : 'Belum ada status dari laptop; angka di atas perkiraan dari jam mulai.') + ' Halaman diperbarui otomatis tiap 30 detik.';
+}
+tick(); setInterval(tick, 30000);
+</script>
+</body>
+</html>

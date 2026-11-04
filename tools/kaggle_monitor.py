@@ -62,6 +62,15 @@ def summarise(name):
     res["files"] = sorted(f"{p.relative_to(d).as_posix()} · {p.stat().st_size / 1e6:.1f} MB" for p in d.rglob("*") if p.is_file() and p.suffix in (".npz", ".onnx", ".pt", ".json"))
     return res
 
+def push_public(ks, sam):
+    """ringkasan tanpa data rahasia → Firebase RTDB /monitor (dibaca halaman publik naramotion.web.app/pemantau.html).
+    Ditulis lewat Firebase CLI (akun pemilik), aturan database: baca publik, tulis hanya admin."""
+    pub = dict(updated=datetime.now().astimezone().isoformat(timespec="seconds"), source="laptop", sam3d=sam,
+               kernels=[{k: x[k] for k in ("name", "status", "started", "finished", "elapsed", "expect", "url")} for x in ks if x["name"].startswith("naramotion-sam3d")])
+    f = RUNS / "_monitor_public.json"; f.write_text(json.dumps(pub), "utf-8")
+    try: subprocess.run(f'firebase database:set /monitor "{f}" --force --project naramotion', shell=True, capture_output=True, timeout=90)
+    except Exception: pass
+
 def poll():
     while True:
         try:
@@ -101,6 +110,7 @@ def poll():
                        sessions=len([k for k in running if k["status"] in ("RUNNING", "QUEUED")]))
             ks.sort(key=lambda k: (k["status"] not in ("RUNNING", "QUEUED"), not k["name"].startswith("naramotion-sam3d"), k["name"]))
             with lock: snapshot.update(kernels=ks, sam3d=sam, checked=datetime.now().isoformat(timespec="seconds"), error=None)
+            push_public(ks, sam)
         except Exception as e:
             with lock: snapshot.update(error=str(e), checked=datetime.now().isoformat(timespec="seconds"))
         time.sleep(60)
