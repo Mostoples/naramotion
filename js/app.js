@@ -696,6 +696,7 @@
         const r = list.find((x) => x.key === key); if (!r) return; cur = r;
         const glb = srcMode === 'rig' && r.rig ? r.rig : `assets/ml/anim/m2mr/${r.key}.glb`;
         mv.src = glb; mv.alt = `Animasi 3D gerak ${r.gerak} (${r.ds})`;
+        $('#anim-arena').href = `arena.html?gerak=${encodeURIComponent(r.key)}`;
         const dl = $('#anim-dl'); dl.href = glb; dl.setAttribute('download', `naramotion_${r.key}_${srcMode}.glb`);
         vid.src = `assets/ml/anim/m2mr/${r.key}.mp4`; vid.play().catch(() => {});
         const clip = (srcMode === 'rig' && r.rig_clip ? r.rig_clip : r.clip).replace(/_/g, ' ');
