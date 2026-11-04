@@ -24,3 +24,8 @@ Thumbs.db
 # kunci tulis progres Kaggle & kernel hasil generator (berisi kunci)
 ml/kaggle/.progress_key
 ml/kaggle/sam3d_r*/sam3d_rest.py
+
+# Remotion: dependensi & salinan aset (sumber ada di marketing/ad/footage, vo)
+marketing/ad/remotion/node_modules/
+marketing/ad/remotion/public/
+marketing/ad/remotion/out/

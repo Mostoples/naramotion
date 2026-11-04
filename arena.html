@@ -79,7 +79,7 @@ const $ = (s) => document.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Arena: model Sketchfab (CC BY 4.0) + suasana cahaya. size = ukuran horizontal terbesar (m), spot = posisi penari relatif kotak model.
 const ARENAS = [
-  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 64, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.9, fill: 40, props: ['gamelan'],
+  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 64, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.62, fill: 7, props: ['gamelan'],
     desc: 'Pendapa rumah joglo Jawa: tempat tari keraton dan sanggar dipentaskan. Cahaya sore masuk dari sisi pendapa.',
     credit: '“Rumah Joglo Jawa” oleh mokhammadsoni', url: 'https://sketchfab.com/3d-models/rumah-joglo-jawa-285d403781454614b04e97b64454ff73' },
   { id: 'borobudur', name: 'Stupa Borobudur', file: 'assets/arena/borobudur.glb', size: 11, spot: 'front', gap: 3.2, cam: [2.6, 1.6, 7], sun: [16, 100], turbidity: 8, exposure: 0.75,
