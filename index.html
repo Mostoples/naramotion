@@ -523,6 +523,7 @@
       <div class="toolbar frame">
         <label class="field"><span>Dataset gerak dasar Bali</span><select id="cam-dataset"></select></label>
         <label class="field"><span>Gerak yang dilatih</span><select id="cam-target"></select></label>
+        <label class="field"><span>Jumlah penari</span><select id="cam-people"><option value="1">1 penari</option><option value="2">2 penari</option><option value="3">3 penari</option><option value="4">4 penari</option></select></label>
         <div class="toolbar-actions">
           <button type="button" class="btn btn-gold btn-sm" id="cam-start">Nyalakan kamera</button>
           <label class="btn btn-line btn-sm cam-upload">Unggah video<input type="file" id="cam-file" accept="video/*" hidden></label>
@@ -559,6 +560,7 @@
           <div class="gauge-num cam-score"><b id="cam-score">–</b><span>/ 100</span></div>
           <p class="grade" id="cam-grade">Menunggu gerakan…</p>
           <p class="cam-note" id="cam-mode"></p>
+          <ul class="cam-multi" id="cam-multi" hidden></ul>
           <h3 class="panel-sub">Gerak terdeteksi <span class="muted">AI</span></h3>
           <ul class="motif-list" id="cam-top"></ul>
           <p class="cam-note">Model dilatih dari 1.740 + 828 video penari Bali (Mendeley Data, CC BY 4.0). Video tidak dikirim ke server.</p>

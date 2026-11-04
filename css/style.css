@@ -721,3 +721,11 @@ body.no-scroll { overflow: hidden; }
 
 .anim-acts { display: flex; flex-wrap: wrap; gap: 8px; }
 .seg-btn[aria-pressed="true"] { background: var(--gold); color: var(--ink); }
+
+/* Kamera AI multi-penari */
+.cam-multi { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 6px; }
+.cam-multi li { display: grid; grid-template-columns: 12px 1fr auto; gap: 4px 8px; align-items: center; padding: 6px 10px; border-radius: var(--r-sm); background: rgba(0, 0, 0, .22); font-size: .9rem; }
+.cam-multi li b { font: 700 1.1rem var(--f-display); color: var(--gold-bright); }
+.cam-multi li .muted { grid-column: 2 / -1; font-size: .78rem; color: var(--muted); }
+.cam-multi .mdot { width: 12px; height: 12px; border-radius: 50%; }
+.cam-wrap.is-multi .cam-view video { object-fit: contain; background: #000; }

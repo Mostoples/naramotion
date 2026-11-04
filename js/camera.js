@@ -156,7 +156,9 @@
     const status = $('#cam-status'), dsSel = $('#cam-dataset'), tgtSel = $('#cam-target');
     const calibBox = $('#cam-calib'), calibMsg = $('#calib-msg'), calibRing = $('#calib-ring'), calibPct = $('#calib-pct'), goBtn = $('#cam-go');
     const lumCv = document.createElement('canvas'); lumCv.width = 48; lumCv.height = 27; const lctx = lumCv.getContext('2d', { willReadFrequently: true });
-    const st = { ds: 'putri', tpl: null, refA: {}, session: null, landmarker: null, buf: [], running: false, lastInfer: 0, result: null, tplT: 0, src: null,
+    const peopleSel = $('#cam-people'), multiBox = $('#cam-multi');
+    const TRACK_COL = () => [PAL.boneHi, '#7fb3d5', '#e07a5f', '#a3c476'];
+    const st = { ds: 'putri', tpl: null, refA: {}, session: null, landmarker: null, buf: [], running: false, lastInfer: 0, result: null, tplT: 0, src: null, np: 1, tracks: [], results: [],
       lastVT: -1, lastDetect: 0, detInt: 1000 / 24, detMs: 0, lm: null, calibrated: false, okSince: 0, lum: 128, lumAt: 0, lostSince: 0, busy: false };
     const PAL = opts.palette;
     root.NaraCamera._st = st;   // untuk QA otomatis (tools/qa_app.py)
@@ -188,7 +190,7 @@
       let vision;
       try { vision = await import(MP_URL + '/vision_bundle.mjs'); } catch (e) { throw new Error('pendeteksi pose tidak bisa dimuat di peramban ini. Perbarui peramban atau pakai Chrome'); }
       const fs = await vision.FilesetResolver.forVisionTasks(MP_URL + '/wasm');
-      const make = (delegate) => vision.PoseLandmarker.createFromOptions(fs, { baseOptions: { modelAssetPath: MP_MODEL, delegate }, runningMode: 'VIDEO', numPoses: 1,
+      const make = (delegate) => vision.PoseLandmarker.createFromOptions(fs, { baseOptions: { modelAssetPath: MP_MODEL, delegate }, runningMode: 'VIDEO', numPoses: 4,
         minPoseDetectionConfidence: 0.5, minPosePresenceConfidence: 0.5, minTrackingConfidence: 0.5 });
       try { st.landmarker = await make('GPU'); } catch (e) { st.landmarker = await make('CPU'); }   // cadangan bila WebGL tidak tersedia
     }
@@ -215,7 +217,7 @@
           video.srcObject = null; video.src = URL.createObjectURL(file); video.loop = true; video.classList.remove('is-mirror');
         }
         video.muted = true; video.setAttribute('playsinline', '');
-        await video.play(); st.running = true; st.buf = []; st.mode = kind; st.lastVT = -1; st.result = null; el.classList.add('is-live');
+        await video.play(); st.running = true; resetTracks(); st.mode = kind; st.lastVT = -1; st.result = null; el.classList.add('is-live');
         if (kind === 'camera') { setCalib(true); say('Kalibrasi kamera: ikuti petunjuk di layar.'); }
         else { setCalib(false); st.calibrated = true; say('Menganalisis video…'); }
       } catch (e) { say(kind === 'camera' && e && e.name ? cameraError(e) : 'Tidak bisa memulai: ' + e.message + '.'); }
@@ -287,7 +289,7 @@
     }
     function beginPractice() {
       if (st.calibrated) return;
-      st.calibrated = true; st.calibDone = 0; calibBox.hidden = true; goBtn.hidden = true; st.buf = [];
+      st.calibrated = true; st.calibDone = 0; calibBox.hidden = true; goBtn.hidden = true; resetTracks();
       say('Latihan dimulai. Peragakan gerak; analisis tiap ½ detik.');
     }
     function calibStep(lm, now, w, h) {
@@ -297,7 +299,18 @@
         if (left <= 0) beginPractice();
         return;
       }
-      const [C, msg] = calibChecks(lm, luminance(now)), all = C.light && C.body && C.dist && C.center;
+      // multi-penari: setiap penari (urut kiri ke kanan) harus lolos; posisi tengah dinilai untuk kelompok
+      const lum = luminance(now), list = (lm || []).slice().sort((a, b) => hipX(a) - hipX(b));
+      let C = { light: lum >= 55 && lum <= 228, body: true, dist: true, center: true }, msg = '';
+      if (list.length < st.np) {
+        const [c0, m0] = calibChecks(list[0] || null, lum); C = { ...c0, body: false, center: list.length ? c0.center : false };
+        msg = !list.length ? m0 : `Baru ${list.length} dari ${st.np} penari terlihat. Pastikan semua penari masuk bingkai.`;
+      } else for (let q = 0; q < st.np; q++) {
+        const [cq, mq] = calibChecks(list[q], lum);
+        C.light = cq.light; C.body = C.body && cq.body; C.dist = C.dist && cq.dist; C.center = st.np > 1 ? C.center : cq.center;
+        if (!msg && mq && !(st.np > 1 && /Geser/.test(mq))) msg = (st.np > 1 ? `Penari ${q + 1}: ` : '') + mq;
+      }
+      const all = C.light && C.body && C.dist && C.center;
       calibBox.querySelectorAll('[data-c]').forEach((li) => li.classList.toggle('ok', !!C[li.dataset.c]));
       drawGuide(w, h, all);
       if (all) {
@@ -309,13 +322,31 @@
     }
 
     function infer() {
-      if (st.busy || !st.session || !st.tpl || st.buf.length < (st.mode === 'file' ? 10 : 24)) return;
-      const buf = st.buf.slice();   // potret buffer: mode video mengosongkan st.buf saat video berulang sebelum analisis selesai
-      const norm = normalise(buf); if (!norm) { say('Badan belum terlihat utuh. Mundur sedikit dari kamera.'); return; }
+      if (st.busy || !st.session || !st.tpl) return;
+      // potret buffer tiap penari: mode video mengosongkan buffer saat video berulang sebelum analisis selesai
+      const minF = st.mode === 'file' ? 10 : 24, jobs = st.tracks.map((tr, i) => [i, tr.buf.slice()]).filter((j) => j[1].length >= minF);
+      if (!jobs.length) return;
+      st.busy = true;
+      // tiap penari dianalisis bergiliran dengan model ONNX yang sama
+      jobs.reduce((pr, [i, buf]) => pr.then(() => inferOne(buf).then((r) => {
+        if (!r) return;
+        st.results[i] = r;
+        if (i === 0) { st.result = r; if (opts.onResult) opts.onResult(r); }
+      })), Promise.resolve()).then(renderMulti).catch((e) => say('Analisis gagal: ' + e.message)).finally(() => { st.busy = false; });
+    }
+    function renderMulti() {
+      if (!multiBox) return;
+      multiBox.hidden = st.np < 2;
+      if (st.np < 2) return;
+      const col = TRACK_COL();
+      multiBox.innerHTML = Array.from({ length: st.np }, (_, i) => { const r = st.results[i];
+        return `<li><span class="mdot" style="background:${col[i]}"></span><span>Penari ${i + 1}</span><b>${r ? Math.round(r.score) : '–'}</b><span class="muted">${r ? pretty(r.top[0][0]) + (r.mode === '3d' ? ' · skor 3D' : '') : 'menunggu gerakan'}</span></li>`; }).join('');
+    }
+    function inferOne(buf) {
+      const norm = normalise(buf); if (!norm) return Promise.resolve(null);
       const R = resample(norm, T);
       const tensor = new root.ort.Tensor('float32', features(R), [1, T, NK * 5]);
-      st.busy = true;
-      st.session.run({ x: tensor }).then((out) => {
+      return st.session.run({ x: tensor }).then((out) => {
         const prob = Array.from(out.prob.data), cls = st.tpl.classes;
         const top = prob.map((p, i) => [cls[i], p]).sort((a, b) => b[1] - a[1]).slice(0, 3);
         const target = tgtSel.value || cls[0];
@@ -337,10 +368,24 @@
           cmp.err = c3.err; cmp.mean = c3.mean; cmp.score = Math.max(0, Math.min(100, 85 - (c3.mean - own) * 35 / (oth - own))); cmp.mode = '3d';
           if (top[0][0] !== target && top[0][1] > 0.6) cmp.score *= 0.6;
         } else cmp.mode = '2d';
-        st.result = { top, target, best, ...cmp, stuLast: R[T - 1] };
-        opts.onResult && opts.onResult(st.result);
-      }).catch((e) => say('Analisis gagal: ' + e.message)).finally(() => { st.busy = false; });
+        return { top, target, best, ...cmp, stuLast: R[T - 1] };
+      });
     }
+    function hipX(lm) { return (lm[23].x + lm[24].x) / 2; }
+    function resetTracks() { st.tracks = Array.from({ length: st.np }, () => ({ buf: [], cx: null })); st.results = []; st.buf = st.tracks[0].buf; renderMulti(); }
+    // cocokkan orang terdeteksi ke track sebelumnya (posisi pinggul terdekat) agar nomor penari tetap
+    function assign(list) {
+      const out = new Array(st.np).fill(null), used = new Set(), pairs = [];
+      list.forEach((lm, j) => st.tracks.forEach((tr, i) => { if (tr.cx != null) pairs.push([Math.abs(hipX(lm) - tr.cx), i, j]); }));
+      pairs.sort((a, b) => a[0] - b[0]);
+      for (const [d, i, j] of pairs) if (out[i] == null && !used.has(j) && d < 0.25) { out[i] = list[j]; used.add(j); }
+      const rest = list.map((lm, j) => j).filter((j) => !used.has(j)).sort((a, b) => hipX(list[a]) - hipX(list[b]));
+      for (let i = 0; i < st.np && rest.length; i++) if (out[i] == null && st.tracks[i].cx == null) out[i] = list[rest.shift()];
+      out.forEach((lm, i) => { if (lm) st.tracks[i].cx = hipX(lm); });
+      return out;
+    }
+    if (peopleSel) peopleSel.addEventListener('change', () => { st.np = +peopleSel.value || 1; el.classList.toggle('is-multi', st.np > 1); resetTracks(); if (st.running && st.mode === 'camera') setCalib(true); });
+    resetTracks();
 
     dsSel.value = 'putri';
     const key = (c) => c.toLowerCase().replace(/[^a-z]/g, '');
@@ -363,28 +408,36 @@
         st.detMs = st.detMs ? st.detMs * 0.9 + ms * 0.1 : ms;
         st.detInt = st.detMs > 60 ? 1000 / 8 : st.detMs > 35 ? 1000 / 12 : st.detMs > 20 ? 1000 / 18 : 1000 / 24;
         st.lastDetect = now;
-        const lm = res.landmarks && res.landmarks[0], wl = res.worldLandmarks && res.worldLandmarks[0];
-        if (st.mode === 'file' && st.lastVT >= 0 && vt + 0.2 < st.lastVT) { infer(); st.buf = []; }   // video berulang: tutup putaran
+        const people0 = res.landmarks || [], allW = res.worldLandmarks || [];
+        if (st.mode === 'file' && st.lastVT >= 0 && vt + 0.2 < st.lastVT) { infer(); st.tracks.forEach((tr) => { tr.buf.length = 0; }); }   // video berulang: tutup putaran
         st.lastVT = vt;
-        if (st.mode === 'camera' && !st.calibrated) { calibStep(lm, now, w, h); }
-        if (lm) {
-          const vw = video.videoWidth, vh = video.videoHeight;
-          const k = MP2COCO.map((i) => [lm[i].x * vw, lm[i].y * vh]), s = MP2COCO.map((i) => lm[i].visibility ?? 1);
-          const scale = Math.max(w / vw, h / vh), ox = (w - vw * scale) / 2, oy = (h - vh * scale) / 2, mir = video.classList.contains('is-mirror');
+        if (st.mode === 'camera' && !st.calibrated) { calibStep(people0, now, w, h); }
+        if (people0.length) {
+          const vw = video.videoWidth, vh = video.videoHeight, col = TRACK_COL();
+          // 1 penari: video memenuhi bingkai (cover); multi-penari: video utuh (contain) agar penari di tepi tidak terpotong
+          const scale = st.np > 1 ? Math.min(w / vw, h / vh) : Math.max(w / vw, h / vh), ox = (w - vw * scale) / 2, oy = (h - vh * scale) / 2, mir = video.classList.contains('is-mirror');
           const map = (p) => [mir ? w - (ox + p[0] * scale) : ox + p[0] * scale, oy + p[1] * scale];
-          drawSkel(octx, k.map((p, j) => [p[0], p[1], s[j]]), map, PAL.boneHi, 3 * dpr, false);
+          const people = assign(people0);
+          people.forEach((pl, i) => {
+            if (!pl) return;
+            const k = MP2COCO.map((q) => [pl[q].x * vw, pl[q].y * vh]), s = MP2COCO.map((q) => pl[q].visibility ?? 1);
+            drawSkel(octx, k.map((p, j) => [p[0], p[1], s[j]]), map, col[i], 3 * dpr, false);
+            if (!st.calibrated) return;
+            const wl = allW[people0.indexOf(pl)], tb = st.tracks[i].buf;
+            tb.push({ k, s, t: now, w: wl ? wl.map((p) => [p.x, p.y, p.z]) : null });
+            if (st.mode !== 'file') while (tb.length && now - tb[0].t > WIN_S * 1000) tb.shift();
+            else while (tb.length > 600) tb.shift();
+          });
           if (!st.calibrated) return;
           st.lostSince = 0;
-          st.buf.push({ k, s, t: now, w: wl ? wl.map((p) => [p.x, p.y, p.z]) : null });
-          if (st.mode !== 'file') while (st.buf.length && now - st.buf[0].t > WIN_S * 1000) st.buf.shift();
-          else while (st.buf.length > 600) st.buf.shift();
         } else if (st.calibrated && st.mode === 'camera') {
           if (!st.lostSince) st.lostSince = now;
           if (now - st.lostSince > 2000) say('Badan tidak terlihat. Kembali ke tengah bingkai, atau tekan Kalibrasi ulang.');
           return;
         }
         if (!st.calibrated) return;
-        const enough = st.mode !== 'file' || (st.buf.length > 1 && (st.buf[st.buf.length - 1].t - st.buf[0].t) / 1000 > 0.8 * (video.duration || 0));
+        const b0 = st.tracks[0].buf;
+        const enough = st.mode !== 'file' || (b0.length > 1 && (b0[b0.length - 1].t - b0[0].t) / 1000 > 0.8 * (video.duration || 0));
         if (enough && now - st.lastInfer > 600) { st.lastInfer = now; infer(); }
       },
     };
