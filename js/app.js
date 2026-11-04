@@ -340,14 +340,17 @@
     // Gerak dasar Bali dalam 3D (SAM 3D Body dari video dataset Mendeley, CC BY 4.0), lengkap dengan jari
     fetch('assets/ml/sam3d_clips.json').then((r) => (r.ok ? r.json() : null)).then((data) => {
       if (!data || !data.clips) return;
-      const og = document.createElement('optgroup'); og.label = 'Gerak dasar Bali · 3D dari video (SAM 3D Body)';
+      // satu optgroup per kelompok (putri/putra): 24 gerak dasar, masing-masing satu klip representatif
+      const groups = {};
       for (const c of data.clips) {
-        const id = 'sam3d-' + c.name;
-        danceById[id] = { id, name: c.gerak + ' (3D)', region: 'Bali · pose 3D dari video', motifs: [c.gerak, 'Pose 3D dari video', 'Lengkap dengan jari'],
+        const id = 'sam3d-' + c.name, ds = c.ds || 'putri';
+        const og = groups[ds] || (groups[ds] = Object.assign(document.createElement('optgroup'), { label: `Gerak dasar Bali ${ds} · 3D dari video (SAM 3D Body)` }));
+        danceById[id] = { id, name: `${c.gerak} (${ds}, 3D)`, region: `Bali · gerak dasar ${ds} · pose 3D dari video`, motifs: [c.gerak, 'Pose 3D dari video', 'Lengkap dengan jari'],
           p: { tempo: 0.25 }, clip: M.positionSource(c) };
-        og.insertAdjacentHTML('beforeend', `<option value="${id}">${esc(c.gerak)} — gerak dasar Bali 3D</option>`);
+        og.insertAdjacentHTML('beforeend', `<option value="${id}">${esc(c.gerak)} — ${ds}</option>`);
       }
-      sel.insertBefore(og, sel.querySelector('optgroup'));
+      const first = sel.querySelector('optgroup');
+      for (const og of Object.values(groups)) sel.insertBefore(og, first);
     }).catch(() => {});
 
     const list = $('#node-list');

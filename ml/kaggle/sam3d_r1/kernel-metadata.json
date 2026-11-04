@@ -1,0 +1,15 @@
+{
+  "id": "mostoplesrinelan/naramotion-sam3d-r1",
+  "title": "NaraMotion SAM3D R1",
+  "code_file": "sam3d_rest.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "mostoplesrinelan/naramotion-hf-token"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
