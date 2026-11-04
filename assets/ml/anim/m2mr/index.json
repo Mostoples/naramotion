@@ -3,144 +3,192 @@
 "ds": "putri",
 "gerak": "Agem Kanan",
 "key": "putri__Agem_Kanan",
-"clip": "Agem_Kanan_66"
+"clip": "Agem_Kanan_66",
+"rig": "assets/ml/rig/putri__Agem_Kanan.glb",
+"rig_clip": "Agem_Kanan_66"
 },
 {
 "ds": "putri",
 "gerak": "Agem Kiri",
 "key": "putri__Agem_Kiri",
-"clip": "Agem_Kiri_71"
+"clip": "Agem_Kiri_71",
+"rig": "assets/ml/rig/putri__Agem_Kiri.glb",
+"rig_clip": "Agem_Kiri_7"
 },
 {
 "ds": "putri",
 "gerak": "Ngeed",
 "key": "putri__Ngeed",
-"clip": "Ngeed_136"
+"clip": "Ngeed_136",
+"rig": "assets/ml/rig/putri__Ngeed.glb",
+"rig_clip": "Ngeed_136"
 },
 {
 "ds": "putri",
 "gerak": "Ngegol",
 "key": "putri__Ngegol",
-"clip": "Ngegol_73"
+"clip": "Ngegol_73",
+"rig": "assets/ml/rig/putri__Ngegol.glb",
+"rig_clip": "Ngegol_73"
 },
 {
 "ds": "putri",
 "gerak": "Ngelo",
 "key": "putri__Ngelo",
-"clip": "Ngelo_139"
+"clip": "Ngelo_139",
+"rig": "assets/ml/rig/putri__Ngelo.glb",
+"rig_clip": "Ngelo_126"
 },
 {
 "ds": "putri",
 "gerak": "Ngelung",
 "key": "putri__Ngelung",
-"clip": "Ngelung_139"
+"clip": "Ngelung_139",
+"rig": "assets/ml/rig/putri__Ngelung.glb",
+"rig_clip": "Ngelung_139"
 },
 {
 "ds": "putri",
 "gerak": "Ngeseh",
 "key": "putri__Ngeseh",
-"clip": "Ngeseh_137"
+"clip": "Ngeseh_137",
+"rig": "assets/ml/rig/putri__Ngeseh.glb",
+"rig_clip": "Ngeseh_137"
 },
 {
 "ds": "putri",
 "gerak": "Ngumbang",
 "key": "putri__Ngumbang",
-"clip": "Ngumbang_129"
+"clip": "Ngumbang_129",
+"rig": "assets/ml/rig/putri__Ngumbang.glb",
+"rig_clip": "Ngumbang_127"
 },
 {
 "ds": "putri",
 "gerak": "Nyalud",
 "key": "putri__Nyalud",
-"clip": "Nyalud_101"
+"clip": "Nyalud_101",
+"rig": "assets/ml/rig/putri__Nyalud.glb",
+"rig_clip": "Nyalud_101"
 },
 {
 "ds": "putri",
 "gerak": "Nyeregseg",
 "key": "putri__Nyeregseg",
-"clip": "Nyeregseg_75"
+"clip": "Nyeregseg_75",
+"rig": "assets/ml/rig/putri__Nyeregseg.glb",
+"rig_clip": "Nyeregseg_75"
 },
 {
 "ds": "putri",
 "gerak": "Seledet",
 "key": "putri__Seledet",
-"clip": "Seledet_100"
+"clip": "Seledet_100",
+"rig": "assets/ml/rig/putri__Seledet.glb",
+"rig_clip": "Seledet_50"
 },
 {
 "ds": "putri",
 "gerak": "Tapak Sirangpada",
 "key": "putri__Tapak_Sirangpada",
-"clip": "Tapak_Sirangpada_101"
+"clip": "Tapak_Sirangpada_101",
+"rig": "assets/ml/rig/putri__Tapak_Sirangpada.glb",
+"rig_clip": "Tapak_Sirangpada_101"
 },
 {
 "ds": "putri",
 "gerak": "Ulap-Ulap",
 "key": "putri__Ulap_Ulap",
-"clip": "Ulap_Ulap_69"
+"clip": "Ulap_Ulap_69",
+"rig": "assets/ml/rig/putri__Ulap_Ulap.glb",
+"rig_clip": "Ulap_Ulap_69"
 },
 {
 "ds": "putra",
 "gerak": "Agem Kanan",
 "key": "putra__Agem_Kanan",
-"clip": "Agem_Kanan_02"
+"clip": "Agem_Kanan_02",
+"rig": "assets/ml/rig/putra__Agem_Kanan.glb",
+"rig_clip": "Agem_Kanan_02"
 },
 {
 "ds": "putra",
 "gerak": "Agem Kiri",
 "key": "putra__Agem_Kiri",
-"clip": "Agem_Kiri_40"
+"clip": "Agem_Kiri_40",
+"rig": "assets/ml/rig/putra__Agem_Kiri.glb",
+"rig_clip": "Agem_Kiri_11"
 },
 {
 "ds": "putra",
 "gerak": "Gandang-Gandang",
 "key": "putra__Gandang_Gandang",
-"clip": "Gandang_Gandang_01"
+"clip": "Gandang_Gandang_01",
+"rig": "assets/ml/rig/putra__Gandang_Gandang.glb",
+"rig_clip": "Gandang_Gandang_01"
 },
 {
 "ds": "putra",
 "gerak": "Malpal",
 "key": "putra__Malpal",
-"clip": "Malpal_39"
+"clip": "Malpal_39",
+"rig": "assets/ml/rig/putra__Malpal.glb",
+"rig_clip": "Malpal_39"
 },
 {
 "ds": "putra",
 "gerak": "Nayog",
 "key": "putra__Nayog",
-"clip": "Nayog_43"
+"clip": "Nayog_43",
+"rig": "assets/ml/rig/putra__Nayog.glb",
+"rig_clip": "Nayog_44"
 },
 {
 "ds": "putra",
 "gerak": "Nepuk Kampuh",
 "key": "putra__Nepuk_Kampuh",
-"clip": "Nepuk_Kampuh_01"
+"clip": "Nepuk_Kampuh_01",
+"rig": "assets/ml/rig/putra__Nepuk_Kampuh.glb",
+"rig_clip": "Nepuk_Kampuh_01"
 },
 {
 "ds": "putra",
 "gerak": "Oyod",
 "key": "putra__Oyod",
-"clip": "Oyod_36"
+"clip": "Oyod_36",
+"rig": "assets/ml/rig/putra__Oyod.glb",
+"rig_clip": "Oyod_01"
 },
 {
 "ds": "putra",
 "gerak": "Piles",
 "key": "putra__Piles",
-"clip": "Piles_18"
+"clip": "Piles_18",
+"rig": "assets/ml/rig/putra__Piles.glb",
+"rig_clip": "Piles_09"
 },
 {
 "ds": "putra",
 "gerak": "Seledet",
 "key": "putra__Seledet",
-"clip": "Seledet_42"
+"clip": "Seledet_42",
+"rig": "assets/ml/rig/putra__Seledet.glb",
+"rig_clip": "Seledet_42"
 },
 {
 "ds": "putra",
 "gerak": "Tapak Sirang Pada",
 "key": "putra__Tapak_Sirang_Pada",
-"clip": "Tapak_Sirang_Pada_41"
+"clip": "Tapak_Sirang_Pada_41",
+"rig": "assets/ml/rig/putra__Tapak_Sirang_Pada.glb",
+"rig_clip": "Tapak_Sirang_Pada_41"
 },
 {
 "ds": "putra",
 "gerak": "Ulap-Ulap",
 "key": "putra__Ulap_Ulap",
-"clip": "Ulap_Ulap_40"
+"clip": "Ulap_Ulap_40",
+"rig": "assets/ml/rig/putra__Ulap_Ulap.glb",
+"rig_clip": "Ulap_Ulap_06"
 }
 ]

@@ -1,0 +1,170 @@
+[
+ {
+  "out": "assets/ml/rig/putri__Agem_Kanan.glb",
+  "frames": 199,
+  "scale": 1.068,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Agem_Kiri.glb",
+  "frames": 241,
+  "scale": 1.086,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Ngeed.glb",
+  "frames": 163,
+  "scale": 1.069,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.02
+ },
+ {
+  "out": "assets/ml/rig/putri__Ngegol.glb",
+  "frames": 121,
+  "scale": 1.071,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Ngelo.glb",
+  "frames": 241,
+  "scale": 1.069,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Ngelung.glb",
+  "frames": 145,
+  "scale": 1.072,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Ngeseh.glb",
+  "frames": 97,
+  "scale": 1.085,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Ngumbang.glb",
+  "frames": 235,
+  "scale": 1.067,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.02
+ },
+ {
+  "out": "assets/ml/rig/putri__Nyalud.glb",
+  "frames": 139,
+  "scale": 1.057,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Nyeregseg.glb",
+  "frames": 199,
+  "scale": 1.102,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Seledet.glb",
+  "frames": 91,
+  "scale": 1.111,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Tapak_Sirangpada.glb",
+  "frames": 73,
+  "scale": 1.037,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putri__Ulap_Ulap.glb",
+  "frames": 181,
+  "scale": 1.075,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Agem_Kanan.glb",
+  "frames": 300,
+  "scale": 1.042,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Agem_Kiri.glb",
+  "frames": 228,
+  "scale": 1.012,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Gandang_Gandang.glb",
+  "frames": 354,
+  "scale": 1.05,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.02
+ },
+ {
+  "out": "assets/ml/rig/putra__Malpal.glb",
+  "frames": 114,
+  "scale": 1.01,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Nayog.glb",
+  "frames": 228,
+  "scale": 1.027,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Nepuk_Kampuh.glb",
+  "frames": 222,
+  "scale": 1.045,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Oyod.glb",
+  "frames": 234,
+  "scale": 1.045,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Piles.glb",
+  "frames": 228,
+  "scale": 1.03,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Seledet.glb",
+  "frames": 108,
+  "scale": 1.046,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Tapak_Sirang_Pada.glb",
+  "frames": 132,
+  "scale": 1.042,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ },
+ {
+  "out": "assets/ml/rig/putra__Ulap_Ulap.glb",
+  "frames": 228,
+  "scale": 1.007,
+  "dir_err_deg": 0.01,
+  "dir_err_max": 0.03
+ }
+]

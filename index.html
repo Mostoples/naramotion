@@ -333,7 +333,7 @@
         <li><b>Tari Lenggang Nyai</b> — <i>Cool Tour Dance</i>, Imagine Cup Indonesia 2013, github.com/nandafirdaus/cool-tour-dance. Dipakai untuk riset gerak Betawi (internal).</li>
         <li><b>Model 3D</b> — “Arjuna — Wayang Golek” oleh Virtual Museums of Małopolska (CC0); “GAMELAN JAWA” oleh eventdesignws, “Borobudur temple” oleh giga, “Rumah Joglo Jawa” oleh mokhammadsoni (CC BY 4.0, Sketchfab).</li>
         <li><b>Animasi 3D</b> — Motion2MixamoRig (MaxLiu22, Apache 2.0) dengan GVHMR, HaMeR, model tubuh SMPL-X dan MANO (MPI, lisensi riset non-komersial), karakter Y Bot (Adobe Mixamo).</li>
-        <li><b>SAM 3D Body</b> — Meta, SAM License. Dipakai untuk pose 3D seluruh tubuh dan jari dari video gerak dasar tari Bali (Studio · gerak dasar Bali 3D).</li>
+        <li><b>SAM 3D Body</b> — Meta, SAM License. Dipakai untuk pose 3D seluruh tubuh dan jari dari video gerak dasar tari Bali (Studio · gerak dasar Bali 3D), lalu dipasang ke rig karakter Y Bot (Adobe Mixamo) untuk animasi di Arsip.</li>
         <li><b>Pustaka</b> — MediaPipe Pose (Google, Apache 2.0), ONNX Runtime Web (Microsoft, MIT), RTMW/rtmlib (OpenMMLab, Apache 2.0).</li>
       </ul>
     </div>
@@ -617,7 +617,7 @@
     <div id="bali-cards" class="dance-cards"></div>
 
     <h2 class="h3">Animasi 3D dari video penari</h2>
-    <p class="fine anim-note">Ke-24 gerak dasar Bali dipindahkan dari video penari ke karakter 3D (GVHMR + HaMeR lewat Motion2MixamoRig). Pilih gerak, lalu seret untuk memutar, cubit atau gulir untuk memperbesar.</p>
+    <p class="fine anim-note">Ke-24 gerak dasar Bali dari video penari dipasang ke rig karakter 3D (Mixamo Y Bot). Sumber utama: hasil digitalisasi SAM 3D Body, lengkap dengan ruas jari. Pilih gerak, lalu seret untuk memutar, cubit atau gulir untuk memperbesar.</p>
     <div class="anim-viewer frame">
       <div class="anim-bar">
         <div class="seg" role="tablist" aria-label="Kelompok gerak">
@@ -625,6 +625,10 @@
           <button type="button" role="tab" class="seg-btn" data-ads="putra" aria-selected="false">Putra · 11</button>
         </div>
         <div class="chips" id="anim-moves"></div>
+        <div class="seg" role="group" aria-label="Sumber animasi">
+          <button type="button" class="seg-btn" data-asrc="rig" aria-pressed="true">SAM 3D Body + jari</button>
+          <button type="button" class="seg-btn" data-asrc="m2mr" aria-pressed="false">Motion2Mixamo</button>
+        </div>
       </div>
       <div class="anim-stage">
         <model-viewer id="anim-mv" autoplay camera-controls touch-action="pan-y" exposure="1.1" shadow-intensity="1" camera-orbit="0deg 80deg auto" alt="Animasi 3D gerak tari Bali"></model-viewer>
@@ -635,7 +639,10 @@
       </div>
       <div class="anim-foot">
         <p id="anim-cap" class="anim-cap"></p>
-        <button type="button" class="btn btn-gold btn-sm" id="anim-practice">Latih gerak ini</button>
+        <div class="anim-acts">
+          <a class="btn btn-line btn-sm" id="anim-dl" href="#" download>Unduh .glb</a>
+          <button type="button" class="btn btn-gold btn-sm" id="anim-practice">Latih gerak ini</button>
+        </div>
       </div>
       <p class="fine" id="anim-warn" hidden></p>
     </div>

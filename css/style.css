@@ -718,3 +718,6 @@ body.no-scroll { overflow: hidden; }
 
 /* Kamera AI di ponsel: kamera selebar layar, gerak acuan di bawahnya */
 @media (max-width: 760px) { .cam-wrap .kelas-grid > .cam-view, .cam-wrap .kelas-grid > .stage-card { grid-column: 1 / -1; } .cam-wrap .kelas-grid > .stage-card:not(.cam-view) { min-height: 260px; } }
+
+.anim-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg-btn[aria-pressed="true"] { background: var(--gold); color: var(--ink); }

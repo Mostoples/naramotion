@@ -691,12 +691,15 @@
       const LIMITED = { 'putri__Seledet': 'Seledet adalah gerak mata dan kepala yang direkam dari dekat, jadi animasi tubuhnya hanya sedikit bergerak.',
         'putra__Seledet': 'Seledet adalah gerak mata dan kepala yang direkam dari dekat, jadi animasi tubuhnya hanya sedikit bergerak.',
         'putri__Tapak_Sirangpada': 'Video Tapak Sirangpada lebih banyak menampilkan kaki, jadi gerak tubuh bagian atas pada karakter kurang akurat.' };
-      let list = [], ds = 'putri', cur = null;
+      let list = [], ds = 'putri', cur = null, srcMode = 'rig';
       function show(key) {
         const r = list.find((x) => x.key === key); if (!r) return; cur = r;
-        mv.src = `assets/ml/anim/m2mr/${r.key}.glb`; mv.alt = `Animasi 3D gerak ${r.gerak} (${r.ds})`;
+        const glb = srcMode === 'rig' && r.rig ? r.rig : `assets/ml/anim/m2mr/${r.key}.glb`;
+        mv.src = glb; mv.alt = `Animasi 3D gerak ${r.gerak} (${r.ds})`;
+        const dl = $('#anim-dl'); dl.href = glb; dl.setAttribute('download', `naramotion_${r.key}_${srcMode}.glb`);
         vid.src = `assets/ml/anim/m2mr/${r.key}.mp4`; vid.play().catch(() => {});
-        $('#anim-cap').textContent = `${r.gerak} · ${r.ds === 'putri' ? 'putri' : 'putra'} · klip ${r.clip.replace(/_/g, ' ')}`;
+        const clip = (srcMode === 'rig' && r.rig_clip ? r.rig_clip : r.clip).replace(/_/g, ' ');
+        $('#anim-cap').textContent = `${r.gerak} · ${r.ds} · klip ${clip} · ${srcMode === 'rig' ? 'rig dari SAM 3D Body' : 'Motion2MixamoRig'}`;
         const w = $('#anim-warn'); w.hidden = !LIMITED[r.key]; w.textContent = LIMITED[r.key] || '';
         moves.querySelectorAll('[data-akey]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.akey === key));
       }
@@ -707,6 +710,10 @@
         if (rows[0]) show(rows[0].key);
       }
       document.querySelectorAll('[data-ads]').forEach((b) => b.addEventListener('click', () => { ds = b.dataset.ads; renderMoves(); }));
+      document.querySelectorAll('[data-asrc]').forEach((b) => b.addEventListener('click', () => {
+        srcMode = b.dataset.asrc; document.querySelectorAll('[data-asrc]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        if (cur) show(cur.key);
+      }));
       moves.addEventListener('click', (e) => { const b = e.target.closest('[data-akey]'); if (b) show(b.dataset.akey); });
       $('#anim-practice').addEventListener('click', () => { if (!cur) return; location.hash = 'kelas'; Kelas.openCam(cur.ds, cur.gerak); });
       fetch('assets/ml/anim/m2mr/index.json').then((r) => r.json()).then((j) => { list = j; renderMoves(); })
