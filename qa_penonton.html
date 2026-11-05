@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>QA penonton</title>
+<style>html,body{margin:0;background:#888}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script></head>
+<body><script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+const q = new URLSearchParams(location.search), names = (q.get('n') || 'Female_Adult_06').split(','), F = q.get('f');
+const r = new THREE.WebGLRenderer({ antialias: true }); r.setSize(innerWidth, innerHeight); r.toneMapping = THREE.ACESFilmicToneMapping; document.body.appendChild(r.domElement);
+const sc = new THREE.Scene(); sc.background = new THREE.Color(0x9a9a9a); sc.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment()).texture;
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 100); cam.position.set(0, 1.2, 7); cam.lookAt(0, 0.8, 0);
+sc.add(new THREE.DirectionalLight(0xffffff, 2).translateX(2).translateY(4).translateZ(3));
+const L = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder), mixers = [];
+let x = -(names.length * 3 - 1) / 2 * 0.9;
+if (F) { const g = await L.loadAsync(F); const o = g.scene; sc.add(o); const o2 = (await L.loadAsync(F)).scene; o2.position.x = 0.9; o2.rotation.y = Math.PI; sc.add(o2); o.position.x = -0.9;
+  const an = q.get('a'); if (an) { const A = await L.loadAsync(an); for (const x of [o, o2]) { const m = new THREE.AnimationMixer(x); m.clipAction(A.animations[0]).play(); m.setTime(+(q.get('t') || 3)); } }
+  cam.position.set(0, 1.5, 3.2); cam.lookAt(0, 1.3, 0); }
+for (const n of F ? [] : names) {
+  const g = await L.loadAsync(`assets/arena/penonton/${n}.glb`);
+  for (const a of g.animations) {
+    const o = (await L.loadAsync(`assets/arena/penonton/${n}.glb`)).scene; o.position.x = x; x += 0.9; sc.add(o);
+    const m = new THREE.AnimationMixer(o); m.clipAction(a).play(); m.setTime(2); mixers.push(m);
+  }
+}
+r.render(sc, cam); window.__ready = true;
+</script></body></html>

@@ -26,7 +26,7 @@ def arena(arena_id, gerak, secs, look=None):
     def f(pg):
         pg.goto(BASE + f"arena.html?gerak={gerak}"); pg.wait_for_function("document.querySelector('#load').hidden", timeout=180000)
         pg.evaluate("document.querySelector('.panel').style.display='none';document.querySelector('.top').style.display='none'")
-        if arena_id != "joglo":
+        if arena_id != "panggung":   # arena pembuka = panggung
             pg.evaluate(f"document.querySelector('[data-arena={arena_id}]').click()"); pg.wait_for_function("document.querySelector('#load').hidden", timeout=180000)
         if look: pg.evaluate(f"document.querySelector('[data-look={look}]').click()")
         pg.wait_for_timeout(2500); t = time.time()

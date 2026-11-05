@@ -60,6 +60,7 @@ select{width:100%;font:15px Spectral,serif;color:var(--cream);background:rgba(0,
   <p class="credit" id="credit"></p>
   <p class="credit" id="mcredit"></p>
   <p class="credit" id="ccredit"></p>
+  <p class="credit">Penonton: avatar <a href="https://github.com/microsoft/Microsoft-Rocketbox" target="_blank" rel="noopener">Microsoft Rocketbox</a> (<a href="assets/arena/penonton/LICENSE.txt" target="_blank" rel="noopener">MIT</a>). Langit &amp; tekstur lantai: <a href="https://polyhaven.com" target="_blank" rel="noopener">Poly Haven</a> (CC0).</p>
   <audio id="audio" loop preload="none"></audio>
 </aside>
 <script type="module">
@@ -68,26 +69,28 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Sky } from 'three/addons/objects/Sky.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 const $ = (s) => document.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Arena: model Sketchfab (CC BY 4.0) + suasana cahaya. size = ukuran horizontal terbesar (m), spot = posisi penari relatif kotak model.
 const ARENAS = [
-  { id: 'panggung', name: 'Panggung Emas', file: null, props: ['gamelan'], exposure: 1.0,
+  { id: 'panggung', name: 'Panggung Emas', file: null, props: ['gamelan'], exposure: 1.0, crowdR: 1.42, crowdY: -0.4,
     desc: 'Panggung pertunjukan malam dengan lampu sorot dan iringan gamelan.' },
-  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 48, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.6, fill: 12, env: 0.4, props: ['gamelan'],
+  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 48, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.6, fill: 12, env: 0.4, props: ['gamelan'], swap: [/Concrete/, 'brick_floor_02', 2.2],
     desc: 'Pendapa rumah joglo Jawa: tempat tari keraton dan sanggar dipentaskan. Cahaya sore masuk dari sisi pendapa.',
     credit: '“Rumah Joglo Jawa” oleh mokhammadsoni', url: 'https://sketchfab.com/3d-models/rumah-joglo-jawa-285d403781454614b04e97b64454ff73' },
-  { id: 'borobudur', name: 'Stupa Borobudur', file: 'assets/arena/borobudur.glb', size: 11, spot: 'front', gap: 3.2, cam: [2.6, 1.6, 7], sun: [16, 100], turbidity: 8, exposure: 0.75,
+  { id: 'borobudur', name: 'Stupa Borobudur', file: 'assets/arena/borobudur.glb', size: 11, spot: 'front', gap: 3.2, cam: [2.6, 1.6, 7], sun: [16, 100], turbidity: 8, exposure: 0.75, floor: 'cobblestone_floor_01', tile: 2.5,
     desc: 'Teras stupa berterawang Candi Borobudur, Magelang, saat matahari pagi.',
     credit: '“Borobudur temple” oleh giga', url: 'https://sketchfab.com/3d-models/borobudur-temple-84525b2dc4094057ab33e026eb961371' },
-  { id: 'trowulan', name: 'Gerbang Trowulan', file: 'assets/arena/trowulan.glb', size: 24, spot: 'front', gap: 5, cam: [2.8, 1.7, 8], sun: [38, 25], turbidity: 3, exposure: 0.6, ground: 0x7a5a44,
+  { id: 'trowulan', name: 'Gerbang Trowulan', file: 'assets/arena/trowulan.glb', size: 24, spot: 'front', gap: 5, cam: [2.8, 1.7, 8], sun: [38, 25], turbidity: 3, exposure: 0.6, ground: 0x7a5a44, floor: 'brick_floor_02', tile: 2.2,
     desc: 'Gerbang bata merah gaya Majapahit di Trowulan, Jawa Timur.',
     credit: '“Gerbang Trowulan Majapahit” oleh aan.javanese32', url: 'https://sketchfab.com/3d-models/gerbang-trowulan-majapahit-kotaraja-gates-98393d8a51d84c0f912f2b2e99a32aed' },
 ];
@@ -96,7 +99,6 @@ const LOOKS = [{ id: 'asli', name: 'Asli' }, { id: 'emas', name: 'Patung emas' }
 // karakter rig: Y Bot (satu .glb per gerak) atau karakter + animasi terpisah (rig Mixamo yang sama, hasil blender/sam3d_retarget.py)
 const CHARS = [
   { id: 'penari', name: 'Penari Jawa', base: 'assets/ml/rig_penari/base.glb', dir: 'assets/ml/rig_penari/', credit: 'Karakter Penari Jawa NaraMotion (kemben, jarik batik, sampur, sanggul & cunduk)' },
-  { id: 'ybot', name: 'Manekin', credit: 'Karakter Y Bot (Adobe Mixamo)' },
 ];
 let charId = 'penari';
 
@@ -131,7 +133,27 @@ const load = (url) => cache.get(url) || (cache.set(url, loader.loadAsync(url)), 
 // ---------- langit (luar ruang) & panggung (malam) ----------
 const sky = new Sky(); sky.scale.setScalar(1500);
 const skyScene = new THREE.Scene(); skyScene.add(sky);
+// langit foto HDRI (Poly Haven, CC0): latar 4K + cahaya lingkungan dari HDR; langit sintetis hanya cadangan
+const SKYF = 'assets/arena/sky/kloofendal_48d_partly_cloudy_puresky';
+let skyHDR = null;
+const skyReady = Promise.all([new RGBELoader().loadAsync(SKYF + '.hdr'), new THREE.TextureLoader().loadAsync(SKYF + '.jpg')]).then(([h, j]) => {
+  h.mapping = THREE.EquirectangularReflectionMapping; j.mapping = THREE.EquirectangularReflectionMapping; j.colorSpace = THREE.SRGBColorSpace;
+  skyHDR = { env: pmrem.fromEquirectangular(h).texture, bg: j }; h.dispose();
+}).catch((e) => console.warn('HDRI gagal, pakai langit sintetis', e));
+// tekstur lantai PBR (Poly Haven, CC0): warna, normal, kekasaran; ulang per ukuran ubin (m)
+const texL = new THREE.TextureLoader(), floorMats = {};
+function floorMat(name, tile, extra = {}) {
+  const k = name + tile; if (floorMats[k]) return floorMats[k];
+  const t = (suf, srgb) => { const x = texL.load(`assets/arena/tex/${name}_${suf}.jpg`); x.wrapS = x.wrapT = THREE.RepeatWrapping; x.anisotropy = 8; if (srgb) x.colorSpace = THREE.SRGBColorSpace; x.repeat.setScalar(tile); return x; };
+  return (floorMats[k] = new THREE.MeshStandardMaterial({ map: t('diff', true), normalMap: t('nor'), roughnessMap: t('rough'), roughness: 1, ...extra }));
+}
 function setSky(elev, azim, turbidity) {
+  if (skyHDR) {
+    const sp = new THREE.Vector3().setFromSphericalCoords(1, THREE.MathUtils.degToRad(90 - elev), THREE.MathUtils.degToRad(azim));
+    scene.environment = skyHDR.env; scene.background = skyHDR.bg; scene.backgroundIntensity = 1; scene.environmentIntensity = 0.9;
+    scene.backgroundRotation.y = scene.environmentRotation.y = THREE.MathUtils.degToRad(azim);
+    return sp;
+  }
   const u = sky.material.uniforms; u.turbidity.value = turbidity; u.rayleigh.value = 1.6; u.mieCoefficient.value = 0.006; u.mieDirectionalG.value = 0.82;
   const sp = new THREE.Vector3().setFromSphericalCoords(1, THREE.MathUtils.degToRad(90 - elev), THREE.MathUtils.degToRad(azim));
   u.sunPosition.value.copy(sp);
@@ -142,7 +164,7 @@ function setSky(elev, azim, turbidity) {
 }
 const stage = new THREE.Group();
 (function buildStage() {
-  const floor = new THREE.Mesh(new THREE.CylinderGeometry(6, 6.3, 0.4, 96), new THREE.MeshStandardMaterial({ color: 0x3a2414, roughness: 0.42, metalness: 0.05 }));
+  const floor = new THREE.Mesh(new THREE.CylinderGeometry(6, 6.3, 0.4, 96), [new THREE.MeshStandardMaterial({ color: 0x2a1a0e, roughness: 0.6 }), floorMat('brown_planks_09', 3, { color: 0x9a7a5a, roughness: 0.55 }), new THREE.MeshStandardMaterial({ color: 0x2a1a0e })]);
   floor.position.y = -0.2; floor.receiveShadow = true; stage.add(floor);
   const ring = new THREE.Mesh(new THREE.TorusGeometry(5.6, 0.04, 8, 160), new THREE.MeshStandardMaterial({ color: 0xdcaa66, metalness: 1, roughness: 0.25, emissive: 0x6a4413, emissiveIntensity: 0.4 }));
   ring.rotation.x = Math.PI / 2; ring.position.y = 0.01; stage.add(ring);
@@ -182,6 +204,14 @@ async function showArena(a) { a_cur = a;
     g.position.x -= c.x; g.position.z -= c.z; g.position.y -= box.min.y; g.updateMatrixWorld(true);
     box.setFromObject(g);
     g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material) { o.material.envMapIntensity = a.env ?? 1; if (a.env != null && o.material.roughness != null) o.material.roughness = Math.max(o.material.roughness, 0.6); } } });
+    // lantai beton model (tekstur 32×4 px hampir putih → kesan berkabut) diganti tekstur foto
+    if (a.swap) g.traverse((o) => {
+      if (!o.isMesh || !a.swap[0].test(o.name + ' ' + (o.material && o.material.name))) return;
+      const pos = o.geometry.attributes.position, uv = new Float32Array(pos.count * 2), v = new THREE.Vector3();   // UV proyeksi atas (ubin a.swap[2] m)
+      for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i).applyMatrix4(o.matrixWorld); uv[2 * i] = v.x / a.swap[2]; uv[2 * i + 1] = v.z / a.swap[2]; }
+      o.geometry = o.geometry.clone(); o.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      o.material = floorMat(a.swap[1], 1, { envMapIntensity: a.env ?? 1 });
+    });
     // titik berdiri penari: tengah lantai pendapa, atau di depan bangunan (sisi +z) untuk candi/gerbang
     let x = 0, z = 0; const bs = box.getSize(new THREE.Vector3());
     if (a.spot === 'front') z = box.max.z + (a.gap || 3);
@@ -189,10 +219,10 @@ async function showArena(a) { a_cur = a;
     const y = a.spot === 'front' ? 0 : floorAt(g, x, z, box.min.y + bs.y * 0.35);
     dancerSpot.set(x, y ?? 0, z);
     scene.add(g); arenaObj = g;
-    if (a.spot === 'front') { plaza.material.color.set(a.ground || 0x857257); scene.add(plaza); }   // pelataran di ketinggian dunia 0 (bukan anak model)
+    if (a.spot === 'front') { plaza.material = a.floor ? floorMat(a.floor, 320 / (a.tile || 2.5)) : new THREE.MeshStandardMaterial({ color: a.ground || 0x857257, roughness: 0.95 }); scene.add(plaza); }   // pelataran di ketinggian dunia 0 (bukan anak model)
     const sp = setSky(a.sun[0], a.sun[1], a.turbidity);
     sun.position.copy(dancerSpot).addScaledVector(sp, 30); sun.target.position.copy(dancerSpot); sun.intensity = 3.2; hemi.intensity = 0.35;
-    scene.fog = new THREE.Fog(0xcfb79a, 90, 600);
+    scene.fog = skyHDR ? new THREE.Fog(0xc2c7cb, 45, 170) : new THREE.Fog(0xcfb79a, 90, 600);   // ujung pelataran melebur ke cakrawala foto
   } else {
     scene.add(stage); arenaObj = null; dancerSpot.set(0, 0, 0);
     scene.environment = roomEnv; scene.background = new THREE.Color(0x070403); scene.fog = null;
@@ -235,7 +265,7 @@ function clearCamera(a) {
   }
   return best.pos;
 }
-window.__arena = { camera, controls, scene, bloom, renderer, get dancer() { return dancer; }, dancerSpot };
+window.__arena = { THREE, camera, controls, scene, bloom, renderer, get dancer() { return dancer; }, dancerSpot };
 
 // ---------- penari (rig Y Bot + animasi hasil digitalisasi) ----------
 let dancer = null, mixer = null, action = null, look = 'asli', speed = 1, playing = true, curMove = null;
@@ -244,8 +274,17 @@ const MATS = {
   tanah: new THREE.MeshStandardMaterial({ color: 0xa4553a, roughness: 0.78, metalness: 0 }),
   asli: null,
 };
+// tampilan "Asli" Penari Jawa: kulit sawo matang & rambut hitam (bukan logam), kain tidak memantul, cunduk tetap emas
+const SKIN = { Penari: { color: 0x9a6442, metalness: 0, roughness: 0.66, map: null }, Rambut: { color: 0x15100c, metalness: 0, roughness: 0.42, map: null },
+  Cunduk: { metalness: 1, roughness: 0.3 }, Kemben: { metalness: 0, roughness: 0.6 }, Jarik: { metalness: 0, roughness: 0.75 }, Sampur: { color: 0x9c2424, metalness: 0, roughness: 0.6, map: null }, Stagen: { metalness: 0, roughness: 0.7 } };
+function naturalMat(o) {
+  const f = SKIN[o.name]; if (!f) return o.material;
+  const m = o.material.clone(); for (const [k, v] of Object.entries(f)) { if (k === 'color') m.color.set(v); else m[k] = v; }
+  if ('clearcoat' in m) m.clearcoat = 0; m.needsUpdate = true; return m;
+}
 function applyLook() {
   if (!dancer) return;
+  dancer.traverse((o) => { if (o.isSkinnedMesh && !o.userData.orig) o.userData.orig = naturalMat(o); });
   dancer.traverse((o) => { if (o.isSkinnedMesh) { o.userData.orig ??= o.material; o.material = MATS[look] || o.userData.orig; o.castShadow = true; o.receiveShadow = true; } });
 }
 async function showMove(m) {
@@ -261,32 +300,63 @@ async function showMove(m) {
   mixer = new THREE.AnimationMixer(dancer); action = mixer.clipAction(clip); action.play(); mixer.timeScale = playing ? speed : 0;
   $('#ccredit').innerHTML = escH(ch.credit) + '.' + (m.url ? ` Gerak didigitalisasi (SAM 3D Body) dari <a href="${escH(m.url)}" target="_blank" rel="noopener">${escH(m.title || m.url)}</a>${m.channel ? ' · ' + escH(m.channel) : ''} · ${escH(m.license)}.` : '');
   if (MUSIC && !userPickedMusic) setMusic(musicFor(m), false);
+  if (crowdMix.length) applause();
   $('#load').hidden = true;
 }
 
-// ---------- penonton: salinan rig dalam pose diam, pakaian warna-warni, duduk/berdiri melingkar di sisi penari ----------
-const crowd = new THREE.Group(); let crowdOn = true;
-const CLOTH = [0x7a2e22, 0x2e4a6b, 0x5b3a1e, 0x3f5e3a, 0x8c6a2c, 0x4a2a4f, 0x6b2b2b, 0x2f2f2f, 0x9a7b4f, 0x24423f];
+// ---------- penonton: manusia Microsoft Rocketbox (MIT) — baris depan duduk di kursi kayu, baris belakang berdiri ----------
+const crowd = new THREE.Group(); let crowdOn = true, crowdMix = [];
+const PEN = 'assets/arena/penonton/';
+const ADULTS = ['Female_Adult_06', 'Male_Adult_15', 'Female_Adult_05', 'Male_Adult_08', 'Female_Adult_09', 'Male_Adult_02', 'Female_Adult_14', 'Male_Adult_20',
+  'Female_Adult_02', 'Male_Adult_09', 'Female_Adult_15', 'Male_Adult_06', 'Male_Adult_14'];
+const KIDS = ['Female_Child_02', 'Male_Child_01', 'Male_Child_02'];
+const chairGeo = (() => {   // kursi kayu sederhana: dudukan 0,45 m, sandaran, empat kaki
+  const parts = [[0.46, 0.04, 0.44, 0, 0.45, 0], [0.46, 0.42, 0.03, 0, 0.68, -0.21]];
+  for (const x of [-0.2, 0.2]) for (const z of [-0.19, 0.19]) parts.push([0.035, 0.45, 0.035, x, 0.225, z]);
+  const geos = parts.map(([w, h, d, x, y, z]) => new THREE.BoxGeometry(w, h, d).translate(x, y, z));
+  return BufferGeometryUtils.mergeGeometries(geos);
+})();
+const chairMat = new THREE.MeshStandardMaterial({ color: 0x6b4426, roughness: 0.6 });
+const chairs = new THREE.InstancedMesh(chairGeo, chairMat, 16); chairs.castShadow = chairs.receiveShadow = true; chairs.count = 0;
+const N_SIT = 14, N_STAND = 17;
 async function buildCrowd() {
-  const src = await load('assets/ml/rig/putri__Seledet.glb');   // gerak Seledet: berdiri tegak → pose penonton
-  for (let i = 0; i < 34; i++) {
-    const c = SkeletonUtils.clone(src.scene); c.traverse((o) => { if (o.isMesh && !o.isSkinnedMesh) o.visible = false;
-      if (o.isSkinnedMesh) { o.material = new THREE.MeshStandardMaterial({ color: CLOTH[i % CLOTH.length], roughness: 0.85 }); o.castShadow = true; o.frustumCulled = false; } });
-    const mx = new THREE.AnimationMixer(c), act = mx.clipAction(src.animations[0]); act.play(); mx.setTime(Math.random() * 3);   // pose diam berbeda-beda
-    c.scale.setScalar(0.92 + Math.random() * 0.14); crowd.add(c);
-  }
-  placeCrowd(); scene.add(crowd);
+  // ponsel: lebih sedikit karakter unik (±5 MB, bukan ±11 MB); jumlah orang tetap
+  const AD = innerWidth < 900 ? ADULTS.slice(0, 6) : ADULTS, KD = innerWidth < 900 ? KIDS.slice(0, 1) : KIDS;
+  const names = [...AD, ...KD], src = Object.fromEntries(await Promise.all(names.map(async (n) => [n, await load(PEN + n + '.glb')])));
+  const add = (n, clipName) => {
+    const g = src[n], c = SkeletonUtils.clone(g.scene);
+    c.traverse((o) => { if (o.isSkinnedMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
+    const mx = new THREE.AnimationMixer(c), clip = (k) => g.animations.find((a) => a.name === k);
+    const base = mx.clipAction(clip(clipName)); base.play(); mx.setTime(Math.random() * 10); mx.timeScale = 0.85 + Math.random() * 0.3;
+    c.userData = { mx, base, clap: clip('clap') && mx.clipAction(clip('clap')), sit: clipName === 'sit' };
+    crowdMix.push(c.userData); crowd.add(c);
+  };
+  for (let i = 0; i < N_SIT; i++) add(AD[i % AD.length], 'sit');
+  for (let i = 0; i < N_STAND; i++) add(i % 6 === 2 ? KD[(i / 6 | 0) % KD.length] : AD[(i + 5) % AD.length], 'idle');
+  crowd.add(chairs); placeCrowd(); scene.add(crowd);
 }
 function placeCrowd() {
   if (!crowd.children.length) return;
-  // dua baris setengah lingkaran di depan-samping penari (sisi kamera dibiarkan terbuka)
-  crowd.children.forEach((c, i) => {
-    const row = i < 18 ? 0 : 1, n = row ? 16 : 18, k = row ? i - 18 : i, r = (row ? 7.6 : 6.2) * (a_cur && a_cur.crowdR || 1);
-    const ang = Math.PI * (0.62 + 0.76 * (k + 0.5) / n) + (row ? 0.04 : 0);   // dari kiri-depan ke kanan-depan, melewati belakang
-    c.position.set(dancerSpot.x + Math.sin(ang) * r, dancerSpot.y, dancerSpot.z + Math.cos(ang) * r);
+  // setengah lingkaran di belakang-samping penari (sisi kamera terbuka): baris kursi lalu baris berdiri
+  const ppl = crowd.children.filter((c) => c !== chairs), m = new THREE.Matrix4(), q = new THREE.Quaternion(), v = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1);
+  let ci = 0;
+  ppl.forEach((c, i) => {
+    const sit = c.userData.sit, k = sit ? i : i - N_SIT, n = sit ? N_SIT : N_STAND, r = (sit ? 5.6 : 7.3) * (a_cur && a_cur.crowdR || 1);
+    const ang = Math.PI * (0.64 + 0.72 * (k + 0.5) / n) + (sit ? 0 : (Math.random() - 0.5) * 0.02);
+    c.position.set(dancerSpot.x + Math.sin(ang) * r, dancerSpot.y + (a_cur && a_cur.crowdY || 0), dancerSpot.z + Math.cos(ang) * r);   // panggung: penonton di lantai bawah
     c.lookAt(dancerSpot.x, c.position.y, dancerSpot.z);
+    if (sit) { q.copy(c.quaternion); v.set(0, 0, -0.06).applyQuaternion(q).add(c.position); m.compose(v, q, one); chairs.setMatrixAt(ci++, m); }
   });
+  chairs.count = ci; chairs.instanceMatrix.needsUpdate = true;
   crowd.visible = crowdOn;
+}
+function applause() {   // sebagian penonton bertepuk tangan saat gerak baru dimulai
+  for (const u of crowdMix) {
+    if (!u.clap || Math.random() > 0.55) continue;
+    const t = 0.4 + Math.random() * 0.8, d = 2.5 + Math.random() * 2;
+    setTimeout(() => { u.clap.reset().play(); u.base.crossFadeTo(u.clap, 0.4, false);
+      setTimeout(() => { u.base.reset().play(); u.clap.crossFadeTo(u.base, 0.6, false); }, d * 1000); }, t * 1000);
+  }
 }
 
 // ---------- iringan gamelan (rekaman Wikimedia Commons berlisensi terbuka) ----------
@@ -333,7 +403,7 @@ function resize() {
 }
 addEventListener('resize', resize); resize();
 const clock = new THREE.Clock();
-renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.1); if (mixer) mixer.update(dt); controls.update(); composer.render(); });
+renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.1); if (mixer) mixer.update(dt); if (crowd.visible) for (const u of crowdMix) u.mx.update(dt); controls.update(); composer.render(); });
 
 (async () => {
   try {
@@ -349,7 +419,7 @@ renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.1); if
       + regions.map((rg) => `<optgroup label="Tari dari video · ${rg}">${moves.map((m, i) => m.ds === 'yt' && m.region === rg ? `<option value="${i}">${escH(m.gerak)}</option>` : '').join('')}</optgroup>`).join('');
     const q = new URLSearchParams(location.search), start = Math.max(0, moves.findIndex((m) => m.key === q.get('gerak')));
     sel.value = String(start);
-    await showArena(ARENAS[0]); await showMove(moves[start]);
+    await skyReady; await showArena(ARENAS[0]); await showMove(moves[start]);
     await initMusic(); await buildCrowd();
   } catch (e) { fail(e); }
 })();

@@ -58,6 +58,16 @@ bpy.ops.object.mode_set(mode="OBJECT")
 
 # 2) bobot: gabungkan grup DEF ke tulang Mixamo
 meshes = [o for o in bpy.data.objects if o.type == "MESH" and any(m.type == "ARMATURE" and m.object == rig for m in o.modifiers)]
+import bmesh
+for o in meshes:
+    # geometri bantu MakeHuman (helper rambut/rok/stoking/bulu mata) aslinya disembunyikan modifier Mask "body" → hapus permanen
+    mk = next((m for m in o.modifiers if m.type == "MASK" and m.vertex_group), None)
+    if mk and mk.vertex_group in o.vertex_groups:
+        gi = o.vertex_groups[mk.vertex_group].index
+        keep = {v.index for v in o.data.vertices if any(g.group == gi and g.weight > 0 for g in v.groups)}
+        bm = bmesh.new(); bm.from_mesh(o.data)
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.index not in keep], context="VERTS"); bm.to_mesh(o.data); bm.free()
+        print("mask", o.name, mk.vertex_group, len(keep), "simpul disimpan")
 for o in meshes:
     me = o.data; acc = {}
     idx = {g.index: g.name for g in o.vertex_groups}
