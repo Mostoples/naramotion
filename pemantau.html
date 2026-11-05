@@ -55,8 +55,10 @@ a{color:var(--gold-b)}
 // Rencana putaran 2 (dipakai bila laptop tidak mengirim status): mulai 4 Nov 2026 10:48 WIB, 2 sesi × ±562 klip, ±65 klip/jam per sesi.
 // Pekerjaan aktif: digitalisasi 56 klip YouTube (45 detik, 29 jenis tari) di 2 sesi Kaggle; ±8 klip/jam per sesi (2×T4).
 // Angka pasti dibaca dari /progress/<sesi>_w<worker> yang dikirim worker Kaggle.
-const PLAN = { total: 56, done0: 0, rate: 8, setupMin: 12, limitH: 11,
-  sessions: [{ name: 'naramotion-sam3d-y1', started: '2026-11-05T06:09:24+07:00', clips: 28 }, { name: 'naramotion-sam3d-y2', started: '2026-11-05T06:09:24+07:00', clips: 28 }] };
+const PLAN = { total: 86, done0: 0, rate: 8, setupMin: 12, limitH: 11,
+  sessions: [{ name: 'naramotion-sam3d-y1', started: '2026-11-05T06:09:24+07:00', clips: 28 }, { name: 'naramotion-sam3d-y2', started: '2026-11-05T06:09:24+07:00', clips: 28 },
+    // video dari Google Drive tim: otomatis dijalankan setelah y1/y2 selesai (perkiraan mulai)
+    { name: 'naramotion-sam3d-d1', started: '2026-11-05T09:45:00+07:00', clips: 15 }, { name: 'naramotion-sam3d-d2', started: '2026-11-05T09:45:00+07:00', clips: 15 }] };
 const DB = 'https://naramotion-default-rtdb.firebaseio.com/monitor.json';
 const $ = (s) => document.querySelector(s);
 const fmt = (d) => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -96,17 +98,17 @@ async function tick() {
   const badge = allDone ? '<span class="badge ok"><span class="dot"></span>selesai</span>'
     : sess.some((s) => s.over) ? '<span class="badge muted"><span class="dot"></span>mestinya sudah selesai</span>'
     : '<span class="badge run"><span class="dot"></span>berjalan</span>';
-  $('#sum').innerHTML = `<div class="head"><h2>Klip YouTube yang sudah jadi 3D</h2>${badge}</div>
+  $('#sum').innerHTML = `<div class="head"><h2>Klip YouTube + Drive yang sudah jadi 3D</h2>${badge}</div>
     <p class="big">±${total.toLocaleString('id-ID')}<small>/ ${PLAN.total.toLocaleString('id-ID')} klip</small></p>
     <div class="bar" role="img" aria-label="Progres ${pct.toFixed(0)} persen"><i style="width:${(done / PLAN.total * 100).toFixed(1)}%"></i><em style="left:${(done / PLAN.total * 100).toFixed(1)}%;width:${(Math.max(0, total - done) / PLAN.total * 100).toFixed(1)}%"></em></div>
     <div class="meta"><div><b>${pct.toFixed(0)}%</b><span>perkiraan progres</span></div><div><b>${fmt(eta)}</b><span>perkiraan selesai (WIB)</span></div>
     <div><b>${done.toLocaleString('id-ID')}</b><span>pasti selesai</span></div><div><b>±${Math.round(est).toLocaleString('id-ID')}</b><span>perkiraan sedang diproses</span></div></div>
     <p class="note">Emas = sudah pasti selesai; pita terang = perkiraan dari lama berjalan (±${PLAN.rate} klip/jam per sesi). Batas paling lambat ${fmt(sess[0].hard)} (batas 11 jam sesi Kaggle).</p>`;
   $('#sessions').innerHTML = sess.map((s) => {
-    const st = s.status || (s.over ? 'perkiraan selesai' : 'berjalan (perkiraan)');
-    const cls = s.status === 'COMPLETE' ? 'ok' : s.status === 'ERROR' ? 'bad' : s.over ? 'muted' : 'run';
+    const st = s.status || (s.runMin < 0 && !s.exact ? 'antre (menunggu y1/y2)' : s.over ? 'perkiraan selesai' : 'berjalan (perkiraan)');
+    const cls = s.status === 'COMPLETE' ? 'ok' : s.status === 'ERROR' ? 'bad' : s.over || s.runMin < 0 ? 'muted' : 'run';
     return `<section class="card"><div class="head"><h2>${esc(s.name.replace('naramotion-', ''))}</h2><span class="badge ${cls}"><span class="dot"></span>${esc(st)}</span></div>
-      <div class="meta"><div><b>${fmt(new Date(s.started))}</b><span>mulai</span></div><div><b>${Math.floor(s.runMin / 60)} j ${Math.round(s.runMin % 60)} m</b><span>sudah berjalan</span></div>
+      <div class="meta"><div><b>${fmt(new Date(s.started))}</b><span>mulai</span></div><div><b>${s.runMin < 0 ? '–' : Math.floor(s.runMin / 60) + ' j ' + Math.round(s.runMin % 60) + ' m'}</b><span>sudah berjalan</span></div>
       <div><b>${s.exact ? '' : '±'}${Math.round(s.status === 'COMPLETE' ? s.clips : s.est)} / ${s.clips}</b><span>klip (${s.exact ? 'pasti, dari Kaggle ' + fmt(new Date(s.lastT * 1000)) : 'perkiraan'})</span></div><div><b>${fmt(s.eta)}</b><span>perkiraan selesai</span></div></div>
       <div class="bar"><i style="width:${Math.min(100, (s.status === 'COMPLETE' ? 1 : s.est / s.clips) * 100).toFixed(1)}%"></i></div>
       <a class="btn" href="https://www.kaggle.com/code/mostoplesrinelan/${esc(s.name)}" target="_blank" rel="noopener">Buka log di Kaggle</a></section>`;
