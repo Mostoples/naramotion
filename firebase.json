@@ -8,6 +8,7 @@
       "**/.*",
       "**/node_modules/**",
       "blender/**",
+      "assets/ml/rig_penari/yt_internal/**",
       "assets/3d/*.png",
       "qa*.html",
       "assets_src/**",

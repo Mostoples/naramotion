@@ -250,7 +250,7 @@ function applyLook() {
 }
 async function showMove(m) {
   curMove = m; $('#load').hidden = false; $('#load').textContent = `Memuat gerak ${m.gerak}…`;
-  const ch = CHARS.find((c) => c.id === charId);
+  const ch0 = CHARS.find((c) => c.id === charId), ch = !ch0.base && !m.rig ? CHARS[0] : ch0;   // gerak dari video hanya tersedia untuk Penari
   let gl, clip;
   if (ch.base) { const [b, an] = await Promise.all([load(ch.base), load(ch.dir + m.key + '.glb')]); gl = b; clip = an.animations[0]; }
   else { gl = await load(m.rig); clip = gl.animations[0]; }
@@ -259,8 +259,8 @@ async function showMove(m) {
   dancer.traverse((o) => { if (o.isMesh && !o.isSkinnedMesh) o.visible = false; });   // sembunyikan objek bantu non-karakter
   scene.add(dancer); applyLook();
   mixer = new THREE.AnimationMixer(dancer); action = mixer.clipAction(clip); action.play(); mixer.timeScale = playing ? speed : 0;
-  $('#ccredit').textContent = ch.credit + '.';
-  if (MUSIC && !userPickedMusic) setMusic(m.ds === 'putra' ? 'bali_gender' : 'bali_joged', false);
+  $('#ccredit').innerHTML = escH(ch.credit) + '.' + (m.url ? ` Gerak didigitalisasi (SAM 3D Body) dari <a href="${escH(m.url)}" target="_blank" rel="noopener">${escH(m.title || m.url)}</a>${m.channel ? ' · ' + escH(m.channel) : ''} · ${escH(m.license)}.` : '');
+  if (MUSIC && !userPickedMusic) setMusic(musicFor(m), false);
   $('#load').hidden = true;
 }
 
@@ -290,13 +290,16 @@ function placeCrowd() {
 }
 
 // ---------- iringan gamelan (rekaman Wikimedia Commons berlisensi terbuka) ----------
+const escH = (x) => String(x ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// iringan menurut asal tari: Bali → joged/gender, Jawa → gambyong, daerah lain → ketawang (iringan netral)
+const musicFor = (m) => m.ds === 'putra' ? 'bali_gender' : m.ds !== 'yt' ? 'bali_joged' : m.region === 'Bali' ? 'bali_joged' : m.region === 'Jawa' ? 'jawa_gambyong' : 'jawa_ketawang';
 let MUSIC = null, userPickedMusic = false; const audio = $('#audio');
 async function initMusic() {
   MUSIC = await (await fetch('assets/music/music.json')).json();
   const names = { bali_joged: 'Bali · Joged', bali_gender: 'Bali · Gender Wayang', jawa_gambyong: 'Jawa · Gambyong', jawa_ketawang: 'Jawa · Ketawang' };
   $('#music').innerHTML = Object.keys(MUSIC).map((k) => `<button type="button" class="chip" data-music="${k}" aria-pressed="false">${names[k] || k}</button>`).join('');
   $('#music').addEventListener('click', (e) => { const b = e.target.closest('[data-music]'); if (b) { userPickedMusic = true; setMusic(b.dataset.music, true); } });
-  const m = moves[+sel.value]; setMusic(m && m.ds === 'putra' ? 'bali_gender' : 'bali_joged', false);
+  const m = moves[+sel.value]; setMusic(m ? musicFor(m) : 'bali_joged', false);
 }
 function setMusic(k, play) {
   const M = MUSIC[k]; if (!M) return;
@@ -336,7 +339,14 @@ renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.1); if
   try {
     const idx = await (await fetch('assets/ml/anim/m2mr/index.json')).json();
     moves = idx.filter((r) => r.rig);
-    sel.innerHTML = ['putri', 'putra'].map((ds) => `<optgroup label="Gerak dasar Bali ${ds}">${moves.map((m, i) => m.ds === ds ? `<option value="${i}">${m.gerak}</option>` : '').join('')}</optgroup>`).join('');
+    // tari utuh dari video YouTube/Drive (SAM 3D Body). Lisensi YouTube standar hanya untuk internal → tampil bila ?internal=1
+    const q0 = new URLSearchParams(location.search), showInt = q0.get('internal') === '1';
+    for (const f of ['yt', ...(showInt ? ['yt_internal'] : [])]) {
+      try { const yt = await (await fetch(`assets/ml/rig_penari/${f}/index.json`)).json(); moves.push(...yt.map((r) => ({ ...r, ds: 'yt' }))); } catch (e) { /* belum ada / tidak di-deploy */ }
+    }
+    const regions = [...new Set(moves.filter((m) => m.ds === 'yt').map((m) => m.region))];
+    sel.innerHTML = ['putri', 'putra'].map((ds) => `<optgroup label="Gerak dasar Bali ${ds}">${moves.map((m, i) => m.ds === ds ? `<option value="${i}">${m.gerak}</option>` : '').join('')}</optgroup>`).join('')
+      + regions.map((rg) => `<optgroup label="Tari dari video · ${rg}">${moves.map((m, i) => m.ds === 'yt' && m.region === rg ? `<option value="${i}">${escH(m.gerak)}</option>` : '').join('')}</optgroup>`).join('');
     const q = new URLSearchParams(location.search), start = Math.max(0, moves.findIndex((m) => m.key === q.get('gerak')));
     sel.value = String(start);
     await showArena(ARENAS[0]); await showMove(moves[start]);
