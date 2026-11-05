@@ -394,6 +394,7 @@ $('#play').addEventListener('click', (e) => { playing = !playing; if (mixer) mix
 $('#orbit').addEventListener('click', (e) => { controls.autoRotate = !controls.autoRotate; e.currentTarget.setAttribute('aria-pressed', String(controls.autoRotate)); e.currentTarget.textContent = controls.autoRotate ? 'Kamera berputar' : 'Kamera diam'; });
 $('#speed').addEventListener('click', (e) => { speed = speed === 1 ? 0.5 : speed === 0.5 ? 0.25 : 1; if (mixer && playing) mixer.timeScale = speed; e.currentTarget.textContent = `Kecepatan ${speed}×`; });
 let moves = [];
+window.__showKey = (k) => { const i = moves.findIndex((m) => m.key === k); if (i < 0) throw new Error('gerak tidak ada: ' + k); sel.value = String(i); return showMove(moves[i]); };   // perekam video
 sel.addEventListener('change', () => showMove(moves[+sel.value]).catch(fail));
 function fail(e) { $('#load').hidden = false; $('#load').textContent = 'Gagal memuat: ' + (e && e.message || e) + '. Muat ulang halaman.'; console.error(e); }
 
