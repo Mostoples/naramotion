@@ -95,10 +95,10 @@ const PROPS = { gamelan: { file: 'assets/arena/gamelan.glb', size: 3.2, credit: 
 const LOOKS = [{ id: 'asli', name: 'Asli' }, { id: 'emas', name: 'Patung emas' }, { id: 'tanah', name: 'Terakota' }];
 // karakter rig: Y Bot (satu .glb per gerak) atau karakter + animasi terpisah (rig Mixamo yang sama, hasil blender/sam3d_retarget.py)
 const CHARS = [
-  { id: 'michelle', name: 'Michelle', base: 'assets/ml/rig_michelle/base.glb', dir: 'assets/ml/rig_michelle/', credit: 'Karakter “Michelle” (Adobe Mixamo, lewat contoh three.js)' },
-  { id: 'ybot', name: 'Manekin Y Bot', credit: 'Karakter Y Bot (Adobe Mixamo)' },
+  { id: 'penari', name: 'Penari Jawa', base: 'assets/ml/rig_penari/base.glb', dir: 'assets/ml/rig_penari/', credit: 'Karakter Penari Jawa NaraMotion (kemben, jarik batik, sampur, sanggul & cunduk)' },
+  { id: 'ybot', name: 'Manekin', credit: 'Karakter Y Bot (Adobe Mixamo)' },
 ];
-let charId = 'michelle';
+let charId = 'penari';
 
 // ---------- renderer & pascaproses (tone mapping ACES, bayangan lembut, bloom halus) ----------
 const canvas = $('#c');

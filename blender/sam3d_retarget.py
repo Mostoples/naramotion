@@ -130,7 +130,7 @@ def retarget(job):
     c = pb[BN("Hips")].constraints.new("COPY_LOCATION"); c.target = E["pelvis"]
     damped("Hips", "chest"); locked("Hips", "hipL", rest[BN("LeftUpLeg")])
     damped("Spine", "chest"); damped("Spine1", "neck"); damped("Spine2", "neck"); locked("Spine2", "shL", rest[BN("LeftArm")])
-    damped("Neck", "headc"); damped("Head", "headtop"); locked("Head", "earL", rest[BN("Head")] + Vector((0.08, 0, 0.05)))
+    damped("Neck", "headc"); damped("Head", "headtop"); locked("Head", "earL", rest[BN("Head")] + (rest[BN("LeftArm")] - rest[BN("RightArm")]).normalized() * 0.1)   # sisi kiri dari rig sendiri (rig bisa menghadap arah berbeda)
     for sd, side in (("L", "Left"), ("R", "Right")):
         damped(f"{side}Shoulder", f"sh{sd}"); damped(f"{side}Arm", f"el{sd}"); damped(f"{side}ForeArm", f"wr{sd}")
         damped(f"{side}Hand", f"Middle0{sd}"); locked(f"{side}Hand", f"Index0{sd}", rest[BN(f"{side}HandIndex1")])
