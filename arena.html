@@ -79,7 +79,9 @@ const $ = (s) => document.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Arena: model Sketchfab (CC BY 4.0) + suasana cahaya. size = ukuran horizontal terbesar (m), spot = posisi penari relatif kotak model.
 const ARENAS = [
-  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 64, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.62, fill: 7, props: ['gamelan'],
+  { id: 'panggung', name: 'Panggung Emas', file: null, props: ['gamelan'], exposure: 1.0,
+    desc: 'Panggung pertunjukan malam dengan lampu sorot dan iringan gamelan.' },
+  { id: 'joglo', name: 'Pendapa Joglo', file: 'assets/arena/joglo.glb', size: 48, spot: { xf: 0.49, zf: 0.67 }, cam: [3.2, 1.7, 4.2], sun: [42, 150], turbidity: 5, exposure: 0.6, fill: 12, env: 0.4, props: ['gamelan'],
     desc: 'Pendapa rumah joglo Jawa: tempat tari keraton dan sanggar dipentaskan. Cahaya sore masuk dari sisi pendapa.',
     credit: '“Rumah Joglo Jawa” oleh mokhammadsoni', url: 'https://sketchfab.com/3d-models/rumah-joglo-jawa-285d403781454614b04e97b64454ff73' },
   { id: 'borobudur', name: 'Stupa Borobudur', file: 'assets/arena/borobudur.glb', size: 11, spot: 'front', gap: 3.2, cam: [2.6, 1.6, 7], sun: [16, 100], turbidity: 8, exposure: 0.75,
@@ -88,8 +90,6 @@ const ARENAS = [
   { id: 'trowulan', name: 'Gerbang Trowulan', file: 'assets/arena/trowulan.glb', size: 24, spot: 'front', gap: 5, cam: [2.8, 1.7, 8], sun: [38, 25], turbidity: 3, exposure: 0.6, ground: 0x7a5a44,
     desc: 'Gerbang bata merah gaya Majapahit di Trowulan, Jawa Timur.',
     credit: '“Gerbang Trowulan Majapahit” oleh aan.javanese32', url: 'https://sketchfab.com/3d-models/gerbang-trowulan-majapahit-kotaraja-gates-98393d8a51d84c0f912f2b2e99a32aed' },
-  { id: 'panggung', name: 'Panggung Emas', file: null, props: ['gamelan'], exposure: 1.0,
-    desc: 'Panggung pertunjukan malam dengan lampu sorot dan iringan gamelan.' },
 ];
 const PROPS = { gamelan: { file: 'assets/arena/gamelan.glb', size: 3.2, credit: '“GAMELAN JAWA” oleh eventdesignws', url: 'https://sketchfab.com/eventdesignws' } };
 const LOOKS = [{ id: 'asli', name: 'Asli' }, { id: 'emas', name: 'Patung emas' }, { id: 'tanah', name: 'Terakota' }];
@@ -181,7 +181,7 @@ async function showArena(a) { a_cur = a;
     box.setFromObject(g); const c = box.getCenter(new THREE.Vector3());
     g.position.x -= c.x; g.position.z -= c.z; g.position.y -= box.min.y; g.updateMatrixWorld(true);
     box.setFromObject(g);
-    g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material) o.material.envMapIntensity = 1; } });
+    g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material) { o.material.envMapIntensity = a.env ?? 1; if (a.env != null && o.material.roughness != null) o.material.roughness = Math.max(o.material.roughness, 0.6); } } });
     // titik berdiri penari: tengah lantai pendapa, atau di depan bangunan (sisi +z) untuk candi/gerbang
     let x = 0, z = 0; const bs = box.getSize(new THREE.Vector3());
     if (a.spot === 'front') z = box.max.z + (a.gap || 3);
@@ -235,7 +235,7 @@ function clearCamera(a) {
   }
   return best.pos;
 }
-window.__arena = { camera, controls, scene, get dancer() { return dancer; }, dancerSpot };
+window.__arena = { camera, controls, scene, bloom, renderer, get dancer() { return dancer; }, dancerSpot };
 
 // ---------- penari (rig Y Bot + animasi hasil digitalisasi) ----------
 let dancer = null, mixer = null, action = null, look = 'asli', speed = 1, playing = true, curMove = null;
