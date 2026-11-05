@@ -131,7 +131,7 @@ def build():
     capture("studio-rec", sr["total"] - 3.7, 3.6, WORK / "s06b.mp4", crop="1280:720:320:330", label=w("e_uc2"))
     concat_v([WORK / "s06a.mp4", WORK / "s06b.mp4"], WORK / "s06.mp4"); S.append((WORK / "s06.mp4", D["uc2"], "uc2", 0.6))
     concat_v([P / "clips/uc3d_Agem_Kanan_101.mp4", P / "clips/uc3d_Nyeregseg_23.mp4"], WORK / "s07a.mp4")
-    d07 = float(subprocess.run([R.FF.replace("ffmpeg", "ffprobe"), "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(WORK / "s07a.mp4")], capture_output=True, text=True).stdout or 12.3)
+    d07 = float(subprocess.run([__import__("os").path.join(__import__("os").path.dirname(R.FF), "ffprobe"), "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(WORK / "s07a.mp4")], capture_output=True, text=True).stdout or 12.3)
     overlay_full(WORK / "s07a.mp4", w("e_uc3d"), WORK / "s07.mp4", d07); S.append((WORK / "s07.mp4", round(d07, 2), "uc3d", 0.6))
     seq(P / "broll_B2", D["uc3"], WORK / "s08.mp4", overlay=w("e_uc3")); S.append((WORK / "s08.mp4", D["uc3"], "uc3", 0.6))
     still(w("e_uc4"), D["uc4"], WORK / "s09.mp4"); S.append((WORK / "s09.mp4", D["uc4"], "uc4", 0.6))
