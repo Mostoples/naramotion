@@ -55,7 +55,7 @@
     },
     "progress": {
       "$k": {
-        ".write": "newData.child('key').val() === 'REMOVED'",
+        ".write": false,
         ".validate": "newData.hasChildren(['key','done','total','t'])",
         "done": {
           ".read": true,

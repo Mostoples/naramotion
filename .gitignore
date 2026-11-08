@@ -31,3 +31,12 @@ marketing/ad/remotion/public/
 marketing/ad/remotion/out/
 assets/ml/rig_penari/yt_internal/
 marketing/kompilasi/_raw/
+
+# Tidak untuk repo publik: naskah lomba, catatan sesi, video berlisensi internal, kernel/dataset Kaggle (berisi kunci)
+paper/
+PROMPT_SESI_BARU.md
+marketing/kompilasi/
+ml/kaggle/sam3d_y*/
+ml/kaggle/sam3d_d*/
+ml/kaggle/yt_dataset/
+ml/kaggle/drive_dataset/
